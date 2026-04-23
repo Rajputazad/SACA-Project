@@ -1,1 +1,10 @@
-
+text,label
+"I have a mild headache",mild
+"slight fever and cough",mild
+"low temperature and tired",mild
+"high fever and body pain",moderate
+"vomiting and dehydration",moderate
+"severe stomach pain",moderate
+"chest pain and breathing difficulty",severe
+"unconscious and not breathing",severe
+"severe injury and bleeding",severe
