@@ -1,0 +1,14 @@
+{
+  "welcome": "Welcome",
+  "getStarted": "Get Started",
+  "chooseLanguage": "Choose language",
+  "continueText": "Continue",
+  "howFeeling": "How are you feeling today?",
+  "tapToSpeak": "Tap to speak your symptoms",
+  "type": "Type",
+  "select": "Select",
+  "wherePain": "Where do you feel pain?",
+  "confirmSelection": "Confirm selection",
+  "connectingCommunity": "Connecting community and health together.",
+  "agreeHealthInfo": "I agree to share my health information"
+}
