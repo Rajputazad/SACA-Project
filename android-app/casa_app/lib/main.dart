@@ -18,7 +18,7 @@ class SacaApp extends StatefulWidget {
 class _SacaAppState extends State<SacaApp> {
   Locale _locale = const Locale('en');
 
-  // 🔥 Change language function
+  // Change language function
   void setLocale(Locale locale) {
     setState(() {
       _locale = locale;

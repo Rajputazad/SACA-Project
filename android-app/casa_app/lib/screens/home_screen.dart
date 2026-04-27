@@ -4,6 +4,7 @@ import '../painters/bg_decoration_painter.dart';
 import '../widgets/bottom_nav.dart';
 import 'body_map_screen.dart';
 import 'package:casa_app/l10n/app_localizations.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -26,9 +27,10 @@ class _HomeScreenState extends State<HomeScreen>
       duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
 
-    _pulse = Tween<double>(begin: 1.0, end: 1.06).animate(
-      CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut),
-    );
+    _pulse = Tween<double>(
+      begin: 1.0,
+      end: 1.06,
+    ).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -116,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
+                  Text(
                     l10n.howFeeling,
                     style: TextStyle(
                       color: kBrown,
@@ -130,10 +132,7 @@ class _HomeScreenState extends State<HomeScreen>
 
                   const Text(
                     'Tell us how you feel',
-                    style: TextStyle(
-                      color: kTextDark,
-                      fontSize: 15,
-                    ),
+                    style: TextStyle(color: kTextDark, fontSize: 15),
                   ),
 
                   const SizedBox(height: 18),
@@ -141,8 +140,7 @@ class _HomeScreenState extends State<HomeScreen>
                   // MIC BUTTON
                   Center(
                     child: GestureDetector(
-                      onTap: () =>
-                          setState(() => _isListening = !_isListening),
+                      onTap: () => setState(() => _isListening = !_isListening),
                       child: AnimatedBuilder(
                         animation: _pulseCtrl,
                         builder: (_, __) {
@@ -183,9 +181,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   ],
                                 ),
                                 child: Icon(
-                                  _isListening
-                                      ? Icons.mic
-                                      : Icons.mic_none,
+                                  _isListening ? Icons.mic : Icons.mic_none,
                                   color: Colors.white,
                                   size: 42,
                                 ),
@@ -221,7 +217,15 @@ class _HomeScreenState extends State<HomeScreen>
                         icon: Icons.keyboard_alt_outlined,
                         title: 'Type',
                         subtitle: 'Type your symptoms',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const BodyMapScreen(openKeyboard: true),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(width: 12),
                       _optionCard(
@@ -232,7 +236,8 @@ class _HomeScreenState extends State<HomeScreen>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const BodyMapScreen(),
+                              builder: (_) =>
+                                  const BodyMapScreen(openKeyboard: false),
                             ),
                           );
                         },
