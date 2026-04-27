@@ -14,10 +14,7 @@ class SacaBottomNav extends StatelessWidget {
       unselectedItemColor: kTextGrey,
       type: BottomNavigationBarType.fixed,
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_rounded),
-          label: 'Home',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
         BottomNavigationBarItem(
           icon: Icon(Icons.description_outlined),
           label: 'Results',

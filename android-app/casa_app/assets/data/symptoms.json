@@ -1,0 +1,134 @@
+{
+  "categories": {
+    "General Symptoms": [
+      "Fever",
+      "Headache",
+      "Cough",
+      "Sore throat",
+      "Vomiting",
+      "Dizziness",
+      "Fatigue",
+      "Body pain",
+      "Nausea",
+      "Weakness"
+    ],
+    "Skin Symptoms": [
+      "Rash",
+      "Itching",
+      "Swelling",
+      "Burning skin",
+      "Skin redness",
+      "Wound",
+      "Skin infection"
+    ],
+    "Head": [
+      "Headache",
+      "Migraine",
+      "Dizziness",
+      "Blurred vision",
+      "Eye pain",
+      "Fever",
+      "Confusion"
+    ],
+    "Neck": [
+      "Neck pain",
+      "Stiff neck",
+      "Swelling",
+      "Sore throat"
+    ],
+    "Chest": [
+      "Chest pain",
+      "Shortness of breath",
+      "Cough",
+      "Heartburn",
+      "Wheezing"
+    ],
+    "Abdomen": [
+      "Stomach pain",
+      "Nausea",
+      "Vomiting",
+      "Diarrhea",
+      "Bloating",
+      "Constipation"
+    ],
+    "Arms": [
+      "Arm pain",
+      "Weakness",
+      "Numbness",
+      "Swelling",
+      "Shoulder pain"
+    ],
+    "Legs": [
+      "Leg pain",
+      "Knee pain",
+      "Numbness",
+      "Swelling",
+      "Foot pain"
+    ],
+    "Back": [
+      "Back pain",
+      "Lower back pain",
+      "Stiffness",
+      "Pain while moving"
+    ]
+  },
+  "types": {
+    "Headache": [
+      "Migraine headache",
+      "Tension headache",
+      "Sinus headache",
+      "Cluster headache",
+      "Headache with eye pain"
+    ],
+    "Migraine": [
+      "Migraine with nausea",
+      "Migraine with light sensitivity",
+      "Migraine with vision changes"
+    ],
+    "Fever": [
+      "Low fever",
+      "High fever",
+      "Fever with chills",
+      "Fever with sweating"
+    ],
+    "Cough": [
+      "Dry cough",
+      "Wet cough",
+      "Cough with fever",
+      "Cough with chest pain"
+    ],
+    "Chest pain": [
+      "Sharp chest pain",
+      "Pressure / tightness",
+      "Burning chest pain",
+      "Pain with breathing"
+    ],
+    "Stomach pain": [
+      "Cramping pain",
+      "Sharp stomach pain",
+      "Burning pain",
+      "Pain after eating"
+    ],
+    "Sore throat": [
+      "Mild sore throat",
+      "Pain when swallowing",
+      "Sore throat with fever"
+    ],
+    "Vomiting": [
+      "Vomiting once",
+      "Repeated vomiting",
+      "Vomiting with stomach pain"
+    ],
+    "Dizziness": [
+      "Light dizziness",
+      "Dizziness when standing",
+      "Dizziness with blurred vision"
+    ],
+    "Back pain": [
+      "Upper back pain",
+      "Lower back pain",
+      "Back stiffness",
+      "Pain while moving"
+    ]
+  }
+}
