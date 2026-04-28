@@ -8,10 +8,7 @@ import 'home_screen.dart';
 class LanguageScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;
 
-  const LanguageScreen({
-    super.key,
-    required this.onLocaleChange,
-  });
+  const LanguageScreen({super.key, required this.onLocaleChange});
 
   @override
   State<LanguageScreen> createState() => _LanguageScreenState();
@@ -34,10 +31,7 @@ class _LanguageScreenState extends State<LanguageScreen>
       duration: const Duration(milliseconds: 700),
     );
 
-    _fade = CurvedAnimation(
-      parent: _fadeCtrl,
-      curve: Curves.easeOut,
-    );
+    _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
 
     _fadeCtrl.forward();
   }
@@ -165,10 +159,7 @@ class _LanguageScreenState extends State<LanguageScreen>
                                   ? kBrown
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: kBrown,
-                                width: 2,
-                              ),
+                              border: Border.all(color: kBrown, width: 2),
                             ),
                             child: _agreeToShare
                                 ? const Icon(
@@ -205,15 +196,18 @@ class _LanguageScreenState extends State<LanguageScreen>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => const HomeScreen(),
+                                    builder: (_) => HomeScreen(
+                                      language: _selectedLanguage == 'Yolŋu'
+                                          ? 'yolngu'
+                                          : 'english',
+                                    ),
                                   ),
                                 );
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: kBrown,
-                          disabledBackgroundColor:
-                              kBrownLight.withOpacity(0.5),
+                          disabledBackgroundColor: kBrownLight.withOpacity(0.5),
                           foregroundColor: Colors.white,
                           elevation: 4,
                           shadowColor: kBrown.withOpacity(0.4),
@@ -303,10 +297,7 @@ class _LanguageScreenState extends State<LanguageScreen>
                   const SizedBox(height: 3),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      color: kTextGrey,
-                      fontSize: 14,
-                    ),
+                    style: const TextStyle(color: kTextGrey, fontSize: 14),
                   ),
                 ],
               ),

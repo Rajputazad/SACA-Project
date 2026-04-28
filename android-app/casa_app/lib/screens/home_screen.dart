@@ -4,9 +4,12 @@ import '../painters/bg_decoration_painter.dart';
 import '../widgets/bottom_nav.dart';
 import 'body_map_screen.dart';
 import 'package:casa_app/l10n/app_localizations.dart';
+import 'speech_symptom_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String language;
+
+  const HomeScreen({super.key, required this.language});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -140,7 +143,15 @@ class _HomeScreenState extends State<HomeScreen>
                   // MIC BUTTON
                   Center(
                     child: GestureDetector(
-                      onTap: () => setState(() => _isListening = !_isListening),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                SpeechSymptomScreen(language: widget.language),
+                          ),
+                        );
+                      },
                       child: AnimatedBuilder(
                         animation: _pulseCtrl,
                         builder: (_, __) {
