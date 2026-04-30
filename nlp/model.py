@@ -4,12 +4,13 @@ import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from nlp_processing import preprocess_text
-
-MODEL_PATH = "model/triage_model.pkl"
-VECTORIZER_PATH = "model/vectorizer.pkl"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "model", "triage_model.pkl")
+VECTORIZER_PATH = os.path.join(BASE_DIR, "model", "vectorizer.pkl")
+DATA_PATH = os.path.join(BASE_DIR, "data", "symptoms.csv")
 
 def train_model():
-    data = pd.read_csv("data/symptoms.csv")
+    data = pd.read_csv(DATA_PATH)
     data['text'] = data['text'].apply(preprocess_text)
 
     X = data['text']
