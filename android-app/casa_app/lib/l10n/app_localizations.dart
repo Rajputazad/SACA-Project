@@ -139,6 +139,18 @@ abstract class AppLocalizations {
   /// **'Have you taken any medicine?'**
   String get medicineQuestion;
 
+  /// No description provided for @addMoreSymptomsQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to add more symptoms?'**
+  String get addMoreSymptomsQuestion;
+
+  /// No description provided for @additionalSymptomQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'What other symptom do you have?'**
+  String get additionalSymptomQuestion;
+
   /// No description provided for @tapToSpeak.
   ///
   /// In en, this message translates to:
@@ -288,6 +300,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
 
   /// No description provided for @type.
   ///

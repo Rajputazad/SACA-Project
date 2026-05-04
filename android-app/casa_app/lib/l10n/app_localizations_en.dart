@@ -30,6 +30,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medicineQuestion => 'Have you taken any medicine?';
 
   @override
+  String get addMoreSymptomsQuestion => 'Do you want to add more symptoms?';
+
+  @override
+  String get additionalSymptomQuestion => 'What other symptom do you have?';
+
+  @override
   String get tapToSpeak => 'Tap to speak your symptoms';
 
   @override
@@ -104,6 +110,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get submit => 'Submit';
 
   @override
   String get type => 'Type';
@@ -216,6 +228,12 @@ class AppLocalizationsEnYn extends AppLocalizationsEn {
   String get medicineQuestion => 'Nhe bä\'pali ŋayatham?';
 
   @override
+  String get addMoreSymptomsQuestion => 'Nhe more batjpatj dhäwu ŋurrkan?';
+
+  @override
+  String get additionalSymptomQuestion => 'Nhä other batjpatj nhe ŋayatham?';
+
+  @override
   String get tapToSpeak => 'Gatjuy dhäruk märram walŋa dhäwu';
 
   @override
@@ -290,6 +308,12 @@ class AppLocalizationsEnYn extends AppLocalizationsEn {
 
   @override
   String get next => 'Ŋupan';
+
+  @override
+  String get yes => 'Yo';
+
+  @override
+  String get submit => 'Submit';
 
   @override
   String get type => 'Dhäruk ŋurrkan';
