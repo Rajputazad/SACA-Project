@@ -173,8 +173,10 @@ class _HomeScreenState extends State<HomeScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      SpeechSymptomScreen(language: _language),
+                                  builder: (_) => SpeechSymptomScreen(
+                                    language: _language,
+                                    onLocaleChange: widget.onLocaleChange,
+                                  ),
                                 ),
                               );
                             },

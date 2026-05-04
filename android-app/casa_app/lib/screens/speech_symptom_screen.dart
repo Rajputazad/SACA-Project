@@ -4,13 +4,20 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../constants/app_colors.dart';
 import '../l10n/app_localizations.dart';
+import '../l10n/app_localizations_en.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../services/nlp_api_service.dart';
+import '../widgets/bottom_nav.dart';
 
 class SpeechSymptomScreen extends StatefulWidget {
   final String language;
+  final ValueChanged<Locale>? onLocaleChange;
 
-  const SpeechSymptomScreen({super.key, required this.language});
+  const SpeechSymptomScreen({
+    super.key,
+    required this.language,
+    this.onLocaleChange,
+  });
 
   @override
   State<SpeechSymptomScreen> createState() => _SpeechSymptomScreenState();
@@ -22,13 +29,20 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
   bool _isListening = false;
   bool _isSending = false;
+  late String _language;
   String _spokenText = '';
   String _status = '';
   int _questionStep = 0;
   final List<String> _answers = [];
 
   String get _languageName {
-    return widget.language == 'yolngu' ? 'Yolŋu' : 'English';
+    return _language == 'yolngu' ? 'Yolŋu' : 'English';
+  }
+
+  AppLocalizations get _l10n {
+    return _language == 'yolngu'
+        ? AppLocalizationsEnYn()
+        : AppLocalizationsEn();
   }
 
   String get _localeId {
@@ -59,11 +73,11 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
   Future<void> _speakPrompt() async {
     if (!mounted) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = _l10n;
     final prompt = _isAddMoreQuestion
         ? _questionText(l10n)
         : '${_questionText(l10n)}. ${l10n.tapMicStart}.';
-    final ttsText = widget.language == 'yolngu' ? _textForTts(prompt) : prompt;
+    final ttsText = _language == 'yolngu' ? _textForTts(prompt) : prompt;
 
     await _tts.stop();
     await _tts.speak(ttsText);
@@ -103,7 +117,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
     if (!mounted) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = _l10n;
 
     setState(() {
       _isListening = false;
@@ -124,7 +138,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
   }
 
   Future<void> _askAnotherSymptom() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = _l10n;
 
     setState(() {
       _questionStep = 4;
@@ -141,7 +155,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
     if (!mounted) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = _l10n;
 
     await _tts.stop();
     await _speech.cancel();
@@ -218,7 +232,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
     if (!mounted) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = _l10n;
 
     setState(() {
       _isListening = false;
@@ -231,7 +245,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
   Future<void> _sendToApi() async {
     if (_spokenText.trim().isEmpty && _answers.isEmpty) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = _l10n;
 
     setState(() {
       _isSending = true;
@@ -240,7 +254,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
     try {
       final result = await NlpApiService.triage(
         text: _combinedSymptomText,
-        language: widget.language,
+        language: _language,
       );
 
       if (!mounted) return;
@@ -276,17 +290,25 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
     }
   }
 
-  Future<void> _showFirstAnswerAlert() async {
-    final firstAnswer = _answers.isNotEmpty ? _answers.first : _spokenText;
-    if (firstAnswer.trim().isEmpty) return;
+  Future<void> _showSymptomsAlert() async {
+    final symptomAnswers = <String>[];
+    for (var i = 0; i < _answers.length; i += 3) {
+      symptomAnswers.add(_answers[i]);
+    }
+    if (_questionStep == 4 && _spokenText.trim().isNotEmpty) {
+      symptomAnswers.add(_spokenText.trim());
+    }
 
-    final l10n = AppLocalizations.of(context)!;
+    final symptomText = symptomAnswers.join('\n');
+    if (symptomText.trim().isEmpty) return;
+
+    final l10n = _l10n;
 
     await showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: Text(l10n.symptomsLabel),
-        content: Text(firstAnswer),
+        content: Text(symptomText),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -300,6 +322,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
   @override
   void initState() {
     super.initState();
+    _language = widget.language;
     _configureTts();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -317,14 +340,14 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
   bool get _hasText => _spokenText.trim().isNotEmpty;
 
   String get _primaryButtonText {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = _l10n;
     if (_isSending) return l10n.checking;
     return l10n.next;
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = _l10n;
 
     return Scaffold(
       backgroundColor: kBackground,
@@ -350,28 +373,6 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                     ),
                     child: Column(
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: compact ? 18 : 22,
-                            vertical: compact ? 10 : 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: kBrown,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Text(
-                            '${l10n.languageLabel}: $_languageName',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: compact ? 18 : 21,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: compact ? 16 : 22),
-
                         Text(
                           _questionText(l10n),
                           textAlign: TextAlign.center,
@@ -472,7 +473,28 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                             ),
                           ),
                         ] else
-                          SizedBox(height: compact ? 120 : 180),
+                          Container(
+                            // width: double.infinity,
+                            // padding: EdgeInsets.symmetric(
+                            //   horizontal: compact ? 18 : 24,
+                            //   vertical: compact ? 18 : 24,
+                            // ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.82),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: kBrownLight.withOpacity(0.45),
+                              ),
+                            ),
+                            child: SizedBox(
+                              
+                              height: compact ? 300 : 400,
+                              child: Image.asset(
+                                'assets/images/add_more_symptoms.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
 
                         SizedBox(height: compact ? 18 : 28),
 
@@ -520,7 +542,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                                           (_hasText && !_isSending))
                                       ? () async {
                                           if (_isAddMoreQuestion) {
-                                            await _showFirstAnswerAlert();
+                                            await _showSymptomsAlert();
                                           } else {
                                             await _goToNextQuestion();
                                           }
@@ -557,6 +579,18 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: SacaBottomNav(
+        currentIndex: 0,
+        onHomeTap: () => Navigator.pop(context),
+        onLocaleChange: widget.onLocaleChange,
+        onLanguageChange: (language) {
+          setState(() {
+            _language = language;
+            _status = _l10n.tapMicStart;
+          });
+          _speakPrompt();
+        },
       ),
     );
   }
