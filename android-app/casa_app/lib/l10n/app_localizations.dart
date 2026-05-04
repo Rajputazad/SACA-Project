@@ -127,11 +127,155 @@ abstract class AppLocalizations {
   /// **'How are you feeling today?'**
   String get howFeeling;
 
+  /// No description provided for @symptomDetailsQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Can you describe it more?'**
+  String get symptomDetailsQuestion;
+
+  /// No description provided for @medicineQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you taken any medicine?'**
+  String get medicineQuestion;
+
   /// No description provided for @tapToSpeak.
   ///
   /// In en, this message translates to:
   /// **'Tap to speak your symptoms'**
   String get tapToSpeak;
+
+  /// No description provided for @tellUsHowFeel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us how you feel'**
+  String get tellUsHowFeel;
+
+  /// No description provided for @listening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get listening;
+
+  /// No description provided for @typeSymptoms.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your symptoms'**
+  String get typeSymptoms;
+
+  /// No description provided for @chooseFromBodyMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from body map'**
+  String get chooseFromBodyMap;
+
+  /// No description provided for @tapMicStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the microphone to start'**
+  String get tapMicStart;
+
+  /// No description provided for @preparingMic.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing microphone...'**
+  String get preparingMic;
+
+  /// No description provided for @tapMicTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap microphone to try again'**
+  String get tapMicTryAgain;
+
+  /// No description provided for @tapMicSpeakAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap microphone to speak again'**
+  String get tapMicSpeakAgain;
+
+  /// No description provided for @speechUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech is not available'**
+  String get speechUnavailable;
+
+  /// No description provided for @exampleStartedMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: It started this morning'**
+  String get exampleStartedMorning;
+
+  /// No description provided for @exampleMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: Yes, I took paracetamol'**
+  String get exampleMedicine;
+
+  /// No description provided for @examplePainFever.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: I have pain and fever'**
+  String get examplePainFever;
+
+  /// No description provided for @triageResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Triage Result'**
+  String get triageResult;
+
+  /// No description provided for @languageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageLabel;
+
+  /// No description provided for @symptomsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Symptoms'**
+  String get symptomsLabel;
+
+  /// No description provided for @severityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Severity'**
+  String get severityLabel;
+
+  /// No description provided for @apiError.
+  ///
+  /// In en, this message translates to:
+  /// **'API Error'**
+  String get apiError;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get checking;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 
   /// No description provided for @type.
   ///
@@ -150,6 +294,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Where do you feel pain?'**
   String get wherePain;
+
+  /// No description provided for @easyToRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy to read'**
+  String get easyToRead;
+
+  /// No description provided for @localLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Local language'**
+  String get localLanguage;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @results.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get results;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @searchSymptoms.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Symptoms'**
+  String get searchSymptoms;
+
+  /// No description provided for @selectSymptom.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Symptom'**
+  String get selectSymptom;
+
+  /// No description provided for @symptomDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Symptom Details'**
+  String get symptomDetails;
+
+  /// No description provided for @addAnotherSymptom.
+  ///
+  /// In en, this message translates to:
+  /// **'Add another symptom'**
+  String get addAnotherSymptom;
+
+  /// No description provided for @searchOrBrowse.
+  ///
+  /// In en, this message translates to:
+  /// **'Search above or browse by body part'**
+  String get searchOrBrowse;
+
+  /// No description provided for @noSymptomsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No symptoms found'**
+  String get noSymptomsFound;
+
+  /// No description provided for @whatTypeOf.
+  ///
+  /// In en, this message translates to:
+  /// **'What type of'**
+  String get whatTypeOf;
+
+  /// No description provided for @intensityLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Intensity level'**
+  String get intensityLevel;
+
+  /// No description provided for @mild.
+  ///
+  /// In en, this message translates to:
+  /// **'Mild'**
+  String get mild;
+
+  /// No description provided for @moderate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get moderate;
+
+  /// No description provided for @severe.
+  ///
+  /// In en, this message translates to:
+  /// **'Severe'**
+  String get severe;
+
+  /// No description provided for @mySymptoms.
+  ///
+  /// In en, this message translates to:
+  /// **'My Symptoms'**
+  String get mySymptoms;
+
+  /// No description provided for @noSymptomsSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No symptoms selected'**
+  String get noSymptomsSelected;
+
+  /// No description provided for @intensity.
+  ///
+  /// In en, this message translates to:
+  /// **'Intensity'**
+  String get intensity;
+
+  /// No description provided for @symptomsConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Symptoms confirmed'**
+  String get symptomsConfirmed;
+
+  /// No description provided for @exampleHeadache.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Headache'**
+  String get exampleHeadache;
+
+  /// No description provided for @tapBodyArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a body area to select symptoms'**
+  String get tapBodyArea;
 
   /// No description provided for @confirmSelection.
   ///

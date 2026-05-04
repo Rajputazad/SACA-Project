@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../constants/app_colors.dart';
+import '../l10n/app_localizations.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../services/nlp_api_service.dart';
 
@@ -20,7 +21,9 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
   bool _isListening = false;
   bool _isSending = false;
   String _spokenText = '';
-  String _status = 'Tap the microphone to start';
+  String _status = '';
+  int _questionStep = 0;
+  final List<String> _answers = [];
 
   String get _languageName {
     return widget.language == 'yolngu' ? 'Yolŋu' : 'English';
@@ -32,14 +35,60 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
     return 'en_US';
   }
 
+  bool get _isFinalQuestion {
+    return _questionStep == 2;
+  }
+
+  String _questionText(AppLocalizations l10n) {
+    if (_questionStep == 1) return l10n.symptomDetailsQuestion;
+    if (_questionStep == 2) return l10n.medicineQuestion;
+    return l10n.howFeeling;
+  }
+
+  String _exampleText(AppLocalizations l10n) {
+    if (_questionStep == 1) return l10n.exampleStartedMorning;
+    if (_questionStep == 2) return l10n.exampleMedicine;
+    return l10n.examplePainFever;
+  }
+
+  String get _combinedSymptomText {
+    final allAnswers = [..._answers];
+    if (_spokenText.trim().isNotEmpty) {
+      allAnswers.add(_spokenText.trim());
+    }
+
+    return allAnswers.join('\n');
+  }
+
+  void _goToNextQuestion() {
+    final answer = _spokenText.trim();
+    if (answer.isEmpty) return;
+
+    final l10n = AppLocalizations.of(context)!;
+
+    setState(() {
+      _answers.add(answer);
+      _spokenText = '';
+      _status = l10n.tapMicStart;
+
+      if (_questionStep == 0) {
+        _questionStep = 1;
+      } else if (_questionStep == 1) {
+        _questionStep = 2;
+      }
+    });
+  }
+
   Future<void> _startListening() async {
     if (_isListening) return;
 
     if (!mounted) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     setState(() {
       _spokenText = '';
-      _status = 'Preparing microphone...';
+      _status = l10n.preparingMic;
     });
 
     final available = await _speech.initialize(
@@ -50,8 +99,8 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
           setState(() {
             _isListening = false;
             _status = _spokenText.trim().isEmpty
-                ? 'Tap microphone to try again'
-                : 'Tap microphone to speak again';
+                ? l10n.tapMicTryAgain
+                : l10n.tapMicSpeakAgain;
           });
         }
       },
@@ -60,7 +109,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
         setState(() {
           _isListening = false;
-          _status = 'Mic error: ${error.errorMsg}';
+          _status = '${l10n.apiError}: ${error.errorMsg}';
         });
       },
     );
@@ -69,18 +118,18 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
     if (!available) {
       setState(() {
-        _status = 'Speech is not available';
+        _status = l10n.speechUnavailable;
       });
       return;
     }
 
     setState(() {
       _isListening = true;
-      _status = 'Listening...';
+      _status = l10n.listening;
     });
 
     await _speech.listen(
-      localeId: 'en_US',
+      localeId: _localeId,
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 5),
       partialResults: true,
@@ -105,16 +154,20 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
     if (!mounted) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     setState(() {
       _isListening = false;
       _status = _spokenText.trim().isEmpty
-          ? 'Tap microphone to try again'
-          : 'Tap microphone to speak again';
+          ? l10n.tapMicTryAgain
+          : l10n.tapMicSpeakAgain;
     });
   }
 
   Future<void> _sendToApi() async {
-    if (_spokenText.trim().isEmpty) return;
+    if (_spokenText.trim().isEmpty && _answers.isEmpty) return;
+
+    final l10n = AppLocalizations.of(context)!;
 
     setState(() {
       _isSending = true;
@@ -122,7 +175,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
     try {
       final result = await NlpApiService.triage(
-        text: _spokenText,
+        text: _combinedSymptomText,
         language: widget.language,
       );
 
@@ -131,16 +184,16 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Triage Result'),
+          title: Text(l10n.triageResult),
           content: Text(
-            'Language: $_languageName\n\n'
-            'Symptoms: ${result['symptoms']}\n\n'
-            'Severity: ${result['severity']}',
+            '${l10n.languageLabel}: $_languageName\n\n'
+            '${l10n.symptomsLabel}: ${result['symptoms']}\n\n'
+            '${l10n.severityLabel}: ${result['severity']}',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
+              child: Text(l10n.ok),
             ),
           ],
         ),
@@ -150,7 +203,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('API Error: $e')));
+      ).showSnackBar(SnackBar(content: Text('${l10n.apiError}: $e')));
     } finally {
       if (!mounted) return;
       setState(() {
@@ -167,8 +220,16 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
   bool get _hasText => _spokenText.trim().isNotEmpty;
 
+  String get _primaryButtonText {
+    final l10n = AppLocalizations.of(context)!;
+    if (_isSending) return l10n.checking;
+    return _isFinalQuestion ? l10n.done : l10n.next;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: kBackground,
       body: Stack(
@@ -194,12 +255,25 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Text(
-                      'Language: $_languageName',
+                      '${l10n.languageLabel}: $_languageName',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                       ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  Text(
+                    _questionText(l10n),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: kBrown,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      height: 1.2,
                     ),
                   ),
 
@@ -253,7 +327,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                   const SizedBox(height: 34),
 
                   Text(
-                    _status,
+                    _status.isEmpty ? l10n.tapMicStart : _status,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: kTextDark,
@@ -275,7 +349,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                     ),
                     child: Text(
                       _spokenText.trim().isEmpty
-                          ? 'Example: I have headache and fever'
+                          ? _exampleText(l10n)
                           : _spokenText,
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -311,9 +385,9 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                                 side: const BorderSide(color: kBrown),
                               ),
                             ),
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(
+                            child: Text(
+                              l10n.cancel,
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -329,7 +403,9 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                           height: 58,
                           child: ElevatedButton(
                             onPressed: _hasText && !_isSending
-                                ? _sendToApi
+                                ? (_isFinalQuestion
+                                      ? _sendToApi
+                                      : _goToNextQuestion)
                                 : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: kBrown,
@@ -342,7 +418,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                               ),
                             ),
                             child: Text(
-                              _isSending ? 'Checking...' : 'Done',
+                              _primaryButtonText,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,

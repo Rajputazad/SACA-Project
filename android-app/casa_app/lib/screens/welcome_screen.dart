@@ -1,16 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:casa_app/l10n/app_localizations.dart';
 import '../constants/app_colors.dart';
 import 'language_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
- final Function(Locale) onLocaleChange;
+  final Function(Locale) onLocaleChange;
 
-  const WelcomeScreen({
-    super.key,
-    required this.onLocaleChange,
-  });
+  const WelcomeScreen({super.key, required this.onLocaleChange});
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
@@ -77,6 +75,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -145,7 +145,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         child: FadeTransition(
                           opacity: _titleFade,
                           child: Text(
-                            'Welcome',
+                            l10n.welcome,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 44,
@@ -159,10 +159,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                       FadeTransition(
                         opacity: _titleFade,
-                        child: const Text(
-                          'Connecting community and health together.',
+                        child: Text(
+                          l10n.connectingCommunity,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
 
@@ -178,10 +181,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                   builder: (_) => LanguageScreen(
-      onLocaleChange: widget.onLocaleChange,
-    ),
-                              ),);
+                                  builder: (_) => LanguageScreen(
+                                    onLocaleChange: widget.onLocaleChange,
+                                  ),
+                                ),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: kButtonRed,
@@ -190,9 +194,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
-                            child: const Text(
-                              'Get Started',
-                              style: TextStyle(
+                            child: Text(
+                              l10n.getStarted,
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:casa_app/l10n/app_localizations.dart';
 
 import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
@@ -9,10 +10,12 @@ import '../widgets/bottom_nav.dart';
 
 class BodyMapScreen extends StatefulWidget {
   final bool openKeyboard;
+  final String language;
 
   const BodyMapScreen({
     super.key,
     this.openKeyboard = false,
+    this.language = 'english',
   });
 
   @override
@@ -21,6 +24,104 @@ class BodyMapScreen extends StatefulWidget {
 
 class _BodyMapScreenState extends State<BodyMapScreen> {
   final List<Map<String, dynamic>> _selectedSymptoms = [];
+
+  static const Map<String, String> _yolnguLabels = {
+    'General Symptoms': 'General batjpatj dhäwu',
+    'Skin Symptoms': 'Skin batjpatj dhäwu',
+    'Head': 'Head',
+    'Neck': 'Neck',
+    'Chest': 'Chest',
+    'Abdomen': 'Stomach wäŋa',
+    'Arms': 'Baṉdja',
+    'Legs': 'Bäka',
+    'Back': 'Back',
+    'Lower Back': 'Lower back',
+    'Left Arm': 'Left baṉdja',
+    'Right Arm': 'Right baṉdja',
+    'Left Leg': 'Left bäka',
+    'Right Leg': 'Right bäka',
+    'Fever': 'Gorrmur',
+    'Headache': 'Head batjpatj',
+    'Cough': 'Cough',
+    'Sore throat': 'Sore throat',
+    'Vomiting': 'Vomiting',
+    'Dizziness': 'Bukumuk',
+    'Fatigue': 'Djawaryun',
+    'Body pain': 'Body batjpatj',
+    'Nausea': 'Nausea',
+    'Weakness': 'Dhoṯ',
+    'Rash': 'Burru\'purru',
+    'Itching': 'Ḏatji',
+    'Swelling': 'Swelling',
+    'Burning skin': 'Skin gorrmur',
+    'Skin redness': 'Skin red',
+    'Wound': 'Wound',
+    'Skin infection': 'Skin disease',
+    'Migraine': 'Migraine',
+    'Blurred vision': 'Blurred vision',
+    'Eye pain': 'Eye batjpatj',
+    'Confusion': 'Confusion',
+    'Neck pain': 'Neck batjpatj',
+    'Stiff neck': 'Stiff neck',
+    'Chest pain': 'Chest batjpatj',
+    'Shortness of breath': 'Breath dhärran',
+    'Heartburn': 'Heartburn',
+    'Wheezing': 'Wheezing',
+    'Stomach pain': 'Stomach batjpatj',
+    'Diarrhea': 'Diarrhea',
+    'Bloating': 'Bloating',
+    'Constipation': 'Constipation',
+    'Arm pain': 'Baṉdja batjpatj',
+    'Numbness': 'Numbness',
+    'Shoulder pain': 'Shoulder batjpatj',
+    'Leg pain': 'Bäka batjpatj',
+    'Knee pain': 'Knee batjpatj',
+    'Foot pain': 'Foot batjpatj',
+    'Back pain': 'Back batjpatj',
+    'Stiffness': 'Stiffness',
+    'Pain while moving': 'Batjpatj movingŋur',
+    'Migraine headache': 'Migraine head batjpatj',
+    'Tension headache': 'Tension head batjpatj',
+    'Sinus headache': 'Sinus head batjpatj',
+    'Cluster headache': 'Cluster head batjpatj',
+    'Headache with eye pain': 'Head batjpatj ga eye batjpatj',
+    'Migraine with nausea': 'Migraine ga nausea',
+    'Migraine with light sensitivity': 'Migraine ga light sensitivity',
+    'Migraine with vision changes': 'Migraine ga vision changes',
+    'Low fever': 'Small gorrmur',
+    'High fever': 'Big gorrmur',
+    'Fever with chills': 'Gorrmur ga chills',
+    'Fever with sweating': 'Gorrmur ga sweating',
+    'Dry cough': 'Dry cough',
+    'Wet cough': 'Wet cough',
+    'Cough with fever': 'Cough ga gorrmur',
+    'Cough with chest pain': 'Cough ga chest batjpatj',
+    'Sharp chest pain': 'Sharp chest batjpatj',
+    'Pressure / tightness': 'Pressure / tightness',
+    'Burning chest pain': 'Burning chest batjpatj',
+    'Pain with breathing': 'Batjpatj breathingŋur',
+    'Cramping pain': 'Cramping batjpatj',
+    'Sharp stomach pain': 'Sharp stomach batjpatj',
+    'Burning pain': 'Burning batjpatj',
+    'Pain after eating': 'Batjpatj ŋatha after',
+    'Mild sore throat': 'Mild sore throat',
+    'Pain when swallowing': 'Batjpatj swallowingŋur',
+    'Sore throat with fever': 'Sore throat ga gorrmur',
+    'Vomiting once': 'Vomiting once',
+    'Repeated vomiting': 'Repeated vomiting',
+    'Vomiting with stomach pain': 'Vomiting ga stomach batjpatj',
+    'Light dizziness': 'Small bukumuk',
+    'Dizziness when standing': 'Bukumuk standingŋur',
+    'Dizziness with blurred vision': 'Bukumuk ga blurred vision',
+    'Upper back pain': 'Upper back batjpatj',
+    'Lower back pain': 'Lower back batjpatj',
+    'Back stiffness': 'Back stiffness',
+  };
+
+  String _label(String value) {
+    if (widget.language != 'yolngu') return value;
+    return _yolnguLabels[value] ?? value;
+  }
 
   final TextEditingController _sheetSearchCtrl = TextEditingController();
   final FocusNode _sheetSearchFocus = FocusNode();
@@ -58,8 +159,9 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
   Future<void> _loadSymptomsData() async {
     try {
-      final jsonString =
-          await rootBundle.loadString('assets/data/symptoms.json');
+      final jsonString = await rootBundle.loadString(
+        'assets/data/symptoms.json',
+      );
 
       final data = json.decode(jsonString) as Map<String, dynamic>;
 
@@ -94,9 +196,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Could not load symptoms.json: $e'),
-        ),
+        SnackBar(content: Text('Could not load symptoms.json: $e')),
       );
     }
   }
@@ -117,8 +217,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   }
 
   List<String> _allSymptoms() {
-    return _categories.values.expand((items) => items).toSet().toList()
-      ..sort();
+    return _categories.values.expand((items) => items).toSet().toList()..sort();
   }
 
   void _onBodyTap(TapDownDetails details, BoxConstraints constraints) {
@@ -135,15 +234,15 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
       if (entry.value.contains(norm)) {
         _sheetSearchFocus.unfocus();
 
-        _showSymptomFlowSheet(
-          initialCategory: _categoryForBodyPart(entry.key),
-        );
+        _showSymptomFlowSheet(initialCategory: _categoryForBodyPart(entry.key));
         break;
       }
     }
   }
 
   void _showSymptomFlowSheet({String? initialCategory}) {
+    final l10n = AppLocalizations.of(context)!;
+
     _sheetSearchCtrl.clear();
 
     String screen = initialCategory == null ? 'categories' : 'symptoms';
@@ -152,13 +251,14 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
     String? selectedType;
     double selectedLevel = 1;
 
-    List<String> visibleSymptoms =
-        initialCategory == null ? [] : (_categories[initialCategory] ?? []);
+    List<String> visibleSymptoms = initialCategory == null
+        ? []
+        : (_categories[initialCategory] ?? []);
 
     String levelText() {
-      if (selectedLevel == 1) return 'Mild';
-      if (selectedLevel == 2) return 'Moderate';
-      return 'Severe';
+      if (selectedLevel == 1) return l10n.mild;
+      if (selectedLevel == 2) return l10n.moderate;
+      return l10n.severe;
     }
 
     showModalBottomSheet(
@@ -166,18 +266,16 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
       isScrollControlled: true,
       backgroundColor: kBackground,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(28),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (sheetContext) {
         return StatefulBuilder(
           builder: (sheetContext, setSheetState) {
             final title = screen == 'categories'
-                ? 'Search Symptoms'
+                ? l10n.searchSymptoms
                 : screen == 'symptoms'
-                    ? selectedCategory ?? 'Select Symptom'
-                    : 'Symptom Details';
+                ? selectedCategory ?? l10n.selectSymptom
+                : l10n.symptomDetails;
 
             return SizedBox(
               height: MediaQuery.of(sheetContext).size.height * 0.88,
@@ -226,7 +324,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
                         Expanded(
                           child: Text(
-                            title,
+                            _label(title),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: kTextDark,
@@ -241,7 +339,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                             _sheetSearchFocus.unfocus();
                             Navigator.pop(sheetContext);
                           },
-                          child: const Text('Cancel'),
+                          child: Text(l10n.cancel),
                         ),
                       ],
                     ),
@@ -256,9 +354,9 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                         controller: _sheetSearchCtrl,
                         focusNode: _sheetSearchFocus,
                         autofocus: initialCategory == null,
-                        decoration: const InputDecoration(
-                          hintText: 'Add another symptom',
-                          prefixIcon: Icon(Icons.search),
+                        decoration: InputDecoration(
+                          hintText: l10n.addAnotherSymptom,
+                          prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (value) {
@@ -276,9 +374,8 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                               screen = 'symptoms';
                               visibleSymptoms = _allSymptoms()
                                   .where(
-                                    (symptom) => symptom
-                                        .toLowerCase()
-                                        .contains(query),
+                                    (symptom) =>
+                                        symptom.toLowerCase().contains(query),
                                   )
                                   .toList();
                             }
@@ -297,8 +394,8 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                       color: const Color(0xFFF2F2F2),
                       child: Text(
                         screen == 'categories'
-                            ? 'Search above or browse by body part'
-                            : 'Select a symptom',
+                            ? l10n.searchOrBrowse
+                            : l10n.selectSymptom,
                         style: const TextStyle(
                           color: kTextGrey,
                           fontSize: 15,
@@ -313,7 +410,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                             children: _categories.keys.map((category) {
                               return ListTile(
                                 title: Text(
-                                  category,
+                                  _label(category),
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
@@ -334,63 +431,64 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                             }).toList(),
                           )
                         : screen == 'symptoms'
-                            ? visibleSymptoms.isEmpty
-                                ? const Center(
-                                    child: Text(
-                                      'No symptoms found',
-                                      style: TextStyle(
-                                        color: kTextGrey,
-                                        fontSize: 16,
-                                      ),
+                        ? visibleSymptoms.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    l10n.noSymptomsFound,
+                                    style: const TextStyle(
+                                      color: kTextGrey,
+                                      fontSize: 16,
                                     ),
-                                  )
-                                : ListView.builder(
-                                    itemCount: visibleSymptoms.length,
-                                    itemBuilder: (context, index) {
-                                      final symptom = visibleSymptoms[index];
+                                  ),
+                                )
+                              : ListView.builder(
+                                  itemCount: visibleSymptoms.length,
+                                  itemBuilder: (context, index) {
+                                    final symptom = visibleSymptoms[index];
 
-                                      return ListTile(
-                                        title: Text(
-                                          symptom,
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700,
-                                          ),
+                                    return ListTile(
+                                      title: Text(
+                                        _label(symptom),
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
                                         ),
-                                        trailing: const Icon(
-                                          Icons.add_circle_outline,
-                                        ),
-                                        onTap: () {
-                                          _sheetSearchFocus.unfocus();
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.add_circle_outline,
+                                      ),
+                                      onTap: () {
+                                        _sheetSearchFocus.unfocus();
 
-                                          setSheetState(() {
-                                            selectedSymptom = symptom;
-                                            selectedType = null;
-                                            selectedLevel = 1;
-                                            screen = 'details';
-                                          });
-                                        },
-                                      );
-                                    },
-                                  )
-                            : _detailsView(
-                                symptom: selectedSymptom ?? '',
-                                selectedType: selectedType,
-                                selectedLevel: selectedLevel,
-                                levelText: levelText(),
-                                onTypeTap: (type) {
-                                  _sheetSearchFocus.unfocus();
+                                        setSheetState(() {
+                                          selectedSymptom = symptom;
+                                          selectedType = null;
+                                          selectedLevel = 1;
+                                          screen = 'details';
+                                        });
+                                      },
+                                    );
+                                  },
+                                )
+                        : _detailsView(
+                            symptom: selectedSymptom ?? '',
+                            selectedType: selectedType,
+                            selectedLevel: selectedLevel,
+                            levelText: levelText(),
+                            l10n: l10n,
+                            onTypeTap: (type) {
+                              _sheetSearchFocus.unfocus();
 
-                                  setSheetState(() {
-                                    selectedType = type;
-                                  });
-                                },
-                                onLevelChanged: (value) {
-                                  setSheetState(() {
-                                    selectedLevel = value;
-                                  });
-                                },
-                              ),
+                              setSheetState(() {
+                                selectedType = type;
+                              });
+                            },
+                            onLevelChanged: (value) {
+                              setSheetState(() {
+                                selectedLevel = value;
+                              });
+                            },
+                          ),
                   ),
 
                   if (screen == 'details')
@@ -417,16 +515,17 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kBrown,
-                            disabledBackgroundColor:
-                                kBrownLight.withOpacity(0.5),
+                            disabledBackgroundColor: kBrownLight.withOpacity(
+                              0.5,
+                            ),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                          child: const Text(
-                            'Confirm selection',
-                            style: TextStyle(
+                          child: Text(
+                            l10n.confirmSelection,
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
                             ),
@@ -451,6 +550,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
     required String? selectedType,
     required double selectedLevel,
     required String levelText,
+    required AppLocalizations l10n,
     required Function(String) onTypeTap,
     required Function(double) onLevelChanged,
   }) {
@@ -460,7 +560,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
       children: [
         Text(
-          'What type of $symptom?',
+          '${l10n.whatTypeOf} ${_label(symptom)}?',
           style: const TextStyle(
             color: kTextDark,
             fontSize: 26,
@@ -477,10 +577,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
             onTap: () => onTypeTap(type),
             child: Container(
               margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 18,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(18),
@@ -493,7 +590,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      type,
+                      _label(type),
                       style: const TextStyle(
                         color: kTextDark,
                         fontSize: 18,
@@ -513,9 +610,9 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
         const SizedBox(height: 18),
 
-        const Text(
-          'Intensity level',
-          style: TextStyle(
+        Text(
+          l10n.intensityLevel,
+          style: const TextStyle(
             color: kTextDark,
             fontSize: 22,
             fontWeight: FontWeight.w900,
@@ -546,27 +643,23 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
           onChanged: onLevelChanged,
         ),
 
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Mild'),
-            Text('Moderate'),
-            Text('Severe'),
-          ],
+          children: [Text(l10n.mild), Text(l10n.moderate), Text(l10n.severe)],
         ),
       ],
     );
   }
 
   void _showMySymptomsDrawer() {
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(28),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (sheetContext) {
         return StatefulBuilder(
@@ -578,9 +671,9 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'My Symptoms',
-                      style: TextStyle(
+                    Text(
+                      l10n.mySymptoms,
+                      style: const TextStyle(
                         color: kTextDark,
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
@@ -591,18 +684,16 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
                     Expanded(
                       child: _selectedSymptoms.isEmpty
-                          ? const Center(
-                              child: Text('No symptoms selected'),
-                            )
+                          ? Center(child: Text(l10n.noSymptomsSelected))
                           : ListView.builder(
                               itemCount: _selectedSymptoms.length,
                               itemBuilder: (context, index) {
                                 final item = _selectedSymptoms[index];
 
                                 return ListTile(
-                                  title: Text(item['type'].toString()),
+                                  title: Text(_label(item['type'].toString())),
                                   subtitle: Text(
-                                    'Intensity: ${item['level']}',
+                                    '${l10n.intensity}: ${item['level']}',
                                   ),
                                   trailing: IconButton(
                                     icon: const Icon(Icons.close),
@@ -624,7 +715,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () => Navigator.pop(sheetContext),
-                            child: const Text('Cancel'),
+                            child: Text(l10n.cancel),
                           ),
                         ),
 
@@ -642,8 +733,8 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                                     Navigator.pop(sheetContext);
 
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Symptoms confirmed'),
+                                      SnackBar(
+                                        content: Text(l10n.symptomsConfirmed),
                                       ),
                                     );
                                   },
@@ -651,7 +742,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                               backgroundColor: kBrown,
                               foregroundColor: Colors.white,
                             ),
-                            child: const Text('Confirm'),
+                            child: Text(l10n.confirmSelection),
                           ),
                         ),
                       ],
@@ -669,6 +760,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   @override
   Widget build(BuildContext context) {
     final hasSymptoms = _selectedSymptoms.isNotEmpty;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: kBackground,
@@ -695,17 +787,14 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(
-                            Icons.search_rounded,
-                            color: kTextGrey,
-                          ),
-                          SizedBox(width: 10),
+                          const Icon(Icons.search_rounded, color: kTextGrey),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'e.g., Headache',
-                              style: TextStyle(
+                              l10n.exampleHeadache,
+                              style: const TextStyle(
                                 color: kTextGrey,
                                 fontSize: 16,
                               ),
@@ -719,10 +808,10 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
                 const SizedBox(height: 12),
 
-                const Text(
-                  'Where do you feel\npain?',
+                Text(
+                  l10n.wherePain,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: kBrown,
                     fontSize: 30,
                     fontWeight: FontWeight.w900,
@@ -732,12 +821,9 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
                 const SizedBox(height: 6),
 
-                const Text(
-                  'Tap a body area to select symptoms',
-                  style: TextStyle(
-                    color: kTextDark,
-                    fontSize: 15,
-                  ),
+                Text(
+                  l10n.tapBodyArea,
+                  style: const TextStyle(color: kTextDark, fontSize: 15),
                 ),
 
                 const SizedBox(height: 12),
@@ -788,7 +874,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: Text(
-                  'My Symptoms (${_selectedSymptoms.length})',
+                  '${l10n.mySymptoms} (${_selectedSymptoms.length})',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,

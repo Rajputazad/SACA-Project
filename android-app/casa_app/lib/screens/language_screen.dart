@@ -125,7 +125,7 @@ class _LanguageScreenState extends State<LanguageScreen>
 
                     _languageCard(
                       title: 'English',
-                      subtitle: 'Easy to read',
+                      subtitle: l10n.easyToRead,
                       icon: Icons.chat_bubble_outline_rounded,
                       isSelected: _selectedLanguage == 'English',
                       onTap: () => _selectLanguage('English'),
@@ -135,7 +135,7 @@ class _LanguageScreenState extends State<LanguageScreen>
 
                     _languageCard(
                       title: 'Yolŋu',
-                      subtitle: 'Local language',
+                      subtitle: l10n.localLanguage,
                       icon: Icons.people_outline_rounded,
                       isSelected: _selectedLanguage == 'Yolŋu',
                       onTap: () => _selectLanguage('Yolŋu'),

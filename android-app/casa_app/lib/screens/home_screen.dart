@@ -133,9 +133,9 @@ class _HomeScreenState extends State<HomeScreen>
 
                   const SizedBox(height: 10),
 
-                  const Text(
-                    'Tell us how you feel',
-                    style: TextStyle(color: kTextDark, fontSize: 15),
+                  Text(
+                    l10n.tellUsHowFeel,
+                    style: const TextStyle(color: kTextDark, fontSize: 15),
                   ),
 
                   const SizedBox(height: 18),
@@ -208,9 +208,7 @@ class _HomeScreenState extends State<HomeScreen>
 
                   Center(
                     child: Text(
-                      _isListening
-                          ? 'Listening...'
-                          : 'Tap to speak your symptoms',
+                      _isListening ? l10n.listening : l10n.tapToSpeak,
                       style: const TextStyle(
                         color: kTextDark,
                         fontSize: 15,
@@ -226,14 +224,16 @@ class _HomeScreenState extends State<HomeScreen>
                     children: [
                       _optionCard(
                         icon: Icons.keyboard_alt_outlined,
-                        title: 'Type',
-                        subtitle: 'Type your symptoms',
+                        title: l10n.type,
+                        subtitle: l10n.typeSymptoms,
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  const BodyMapScreen(openKeyboard: true),
+                              builder: (_) => BodyMapScreen(
+                                openKeyboard: true,
+                                language: widget.language,
+                              ),
                             ),
                           );
                         },
@@ -241,14 +241,16 @@ class _HomeScreenState extends State<HomeScreen>
                       const SizedBox(width: 12),
                       _optionCard(
                         icon: Icons.add_circle_outline,
-                        title: 'Select',
-                        subtitle: 'Choose from body map',
+                        title: l10n.select,
+                        subtitle: l10n.chooseFromBodyMap,
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  const BodyMapScreen(openKeyboard: false),
+                              builder: (_) => BodyMapScreen(
+                                openKeyboard: false,
+                                language: widget.language,
+                              ),
                             ),
                           );
                         },
