@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from model import predict
@@ -6,29 +7,55 @@ from nlp_processing import extract_symptoms, translate_to_english
 
 app = FastAPI(title="SACA NLP API")
 
-class SymptomRequest(BaseModel):
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+class TriageRequest(BaseModel):
     text: str
-    language: str = "english"  # english / yolngu
+    age: int = 30
+    gender: str = "Other"
+    language: str = "english"
+
 
 @app.get("/")
 def home():
     return {"message": "SACA NLP API running"}
 
+
 @app.post("/triage")
-def triage(request: SymptomRequest):
-    text = request.text
+def triage(request: TriageRequest):
+    if request.language.lower() == "yolngu":
+        lang_choice = 2
+        processed_text = translate_to_english(request.text)
+    else:
+        lang_choice = 1
+        processed_text = request.text
 
-    lang_choice = 1 if request.language == "english" else 2
+    symptoms = extract_symptoms(processed_text, lang_choice)
 
-    if request.language == "yolngu":
-        text = translate_to_english(text)
+    if not symptoms:
+        return {
+            "input_text": request.text,
+            "processed_text": processed_text,
+            "symptoms": [],
+            "severity": "Could not determine",
+            "confidence": {},
+            "recommendation": "Please enter clearer symptoms.",
+        }
 
-    symptoms = extract_symptoms(text, lang_choice)
-    severity = predict(text)
+    severity = predict(processed_text)
 
     return {
         "input_text": request.text,
-        "processed_text": text,
+        "processed_text": processed_text,
         "symptoms": symptoms,
-        "severity": severity
+        "severity": severity,
+        "confidence": {},
+        "recommendation": "Basic model prediction",
     }

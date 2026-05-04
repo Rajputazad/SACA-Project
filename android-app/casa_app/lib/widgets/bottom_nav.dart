@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:casa_app/l10n/app_localizations.dart';
 import '../constants/app_colors.dart';
 
 class SacaBottomNav extends StatelessWidget {
@@ -8,20 +9,25 @@ class SacaBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       selectedItemColor: kBrown,
       unselectedItemColor: kTextGrey,
       type: BottomNavigationBarType.fixed,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.description_outlined),
-          label: 'Results',
+          icon: const Icon(Icons.home_rounded),
+          label: l10n.home,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings_outlined),
-          label: 'Settings',
+          icon: const Icon(Icons.description_outlined),
+          label: l10n.results,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.settings_outlined),
+          label: l10n.settings,
         ),
       ],
       onTap: (index) {
