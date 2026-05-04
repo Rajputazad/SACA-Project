@@ -60,26 +60,29 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
     if (!mounted) return;
 
     final l10n = AppLocalizations.of(context)!;
-    final prompt = '${_questionText(l10n)}. ${l10n.tapMicStart}.';
+    final prompt = _isAddMoreQuestion
+        ? _questionText(l10n)
+        : '${_questionText(l10n)}. ${l10n.tapMicStart}.';
     final ttsText = widget.language == 'yolngu' ? _textForTts(prompt) : prompt;
 
     await _tts.stop();
     await _tts.speak(ttsText);
   }
 
-  bool get _isFinalQuestion {
-    return _questionStep == 2;
-  }
+  bool get _isAddMoreQuestion => _questionStep == 3;
 
   String _questionText(AppLocalizations l10n) {
     if (_questionStep == 1) return l10n.symptomDetailsQuestion;
     if (_questionStep == 2) return l10n.medicineQuestion;
+    if (_questionStep == 3) return l10n.addMoreSymptomsQuestion;
+    if (_questionStep == 4) return l10n.additionalSymptomQuestion;
     return l10n.howFeeling;
   }
 
   String _exampleText(AppLocalizations l10n) {
     if (_questionStep == 1) return l10n.exampleStartedMorning;
     if (_questionStep == 2) return l10n.exampleMedicine;
+    if (_questionStep == 3) return '';
     return l10n.examplePainFever;
   }
 
@@ -112,7 +115,22 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
         _questionStep = 1;
       } else if (_questionStep == 1) {
         _questionStep = 2;
+      } else if (_questionStep == 2 || _questionStep == 4) {
+        _questionStep = 3;
       }
+    });
+
+    await _speakPrompt();
+  }
+
+  Future<void> _askAnotherSymptom() async {
+    final l10n = AppLocalizations.of(context)!;
+
+    setState(() {
+      _questionStep = 4;
+      _spokenText = '';
+      _status = l10n.tapMicStart;
+      _isListening = false;
     });
 
     await _speakPrompt();
@@ -258,6 +276,27 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
     }
   }
 
+  Future<void> _showFirstAnswerAlert() async {
+    final firstAnswer = _answers.isNotEmpty ? _answers.first : _spokenText;
+    if (firstAnswer.trim().isEmpty) return;
+
+    final l10n = AppLocalizations.of(context)!;
+
+    await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(l10n.symptomsLabel),
+        content: Text(firstAnswer),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.ok),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -280,7 +319,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
   String get _primaryButtonText {
     final l10n = AppLocalizations.of(context)!;
     if (_isSending) return l10n.checking;
-    return _isFinalQuestion ? l10n.done : l10n.next;
+    return l10n.next;
   }
 
   @override
@@ -346,91 +385,94 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
                         SizedBox(height: compact ? 16 : 22),
 
-                        GestureDetector(
-                          onTap: _isListening
-                              ? _stopListening
-                              : _startListening,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: micOuter,
-                                height: micOuter,
-                                decoration: BoxDecoration(
-                                  color: kBrownLight.withOpacity(0.18),
-                                  shape: BoxShape.circle,
+                        if (!_isAddMoreQuestion) ...[
+                          GestureDetector(
+                            onTap: _isListening
+                                ? _stopListening
+                                : _startListening,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: micOuter,
+                                  height: micOuter,
+                                  decoration: BoxDecoration(
+                                    color: kBrownLight.withOpacity(0.18),
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                width: micMiddle,
-                                height: micMiddle,
-                                decoration: BoxDecoration(
-                                  color: kBrownLight.withOpacity(0.28),
-                                  shape: BoxShape.circle,
+                                Container(
+                                  width: micMiddle,
+                                  height: micMiddle,
+                                  decoration: BoxDecoration(
+                                    color: kBrownLight.withOpacity(0.28),
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                width: micInner,
-                                height: micInner,
-                                decoration: BoxDecoration(
-                                  color: kBrown,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: kBrown.withOpacity(0.35),
-                                      blurRadius: 22,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                  ],
+                                Container(
+                                  width: micInner,
+                                  height: micInner,
+                                  decoration: BoxDecoration(
+                                    color: kBrown,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: kBrown.withOpacity(0.35),
+                                        blurRadius: 22,
+                                        offset: const Offset(0, 10),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    _isListening ? Icons.mic : Icons.mic_none,
+                                    color: Colors.white,
+                                    size: compact ? 50 : 60,
+                                  ),
                                 ),
-                                child: Icon(
-                                  _isListening ? Icons.mic : Icons.mic_none,
-                                  color: Colors.white,
-                                  size: compact ? 50 : 60,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: compact ? 18 : 28),
-
-                        Text(
-                          _status.isEmpty ? l10n.tapMicStart : _status,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: kTextDark,
-                            fontSize: compact ? 24 : 29,
-                            fontWeight: FontWeight.w900,
-                            height: 1.15,
-                          ),
-                        ),
-
-                        SizedBox(height: compact ? 14 : 18),
-
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(compact ? 14 : 18),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: kBrown, width: 1.4),
-                          ),
-                          child: Text(
-                            _spokenText.trim().isEmpty
-                                ? _exampleText(l10n)
-                                : _spokenText,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: _spokenText.trim().isEmpty
-                                  ? kTextGrey
-                                  : kTextDark,
-                              fontSize: compact ? 18 : 21,
-                              fontWeight: FontWeight.w800,
-                              height: 1.28,
+                              ],
                             ),
                           ),
-                        ),
+
+                          SizedBox(height: compact ? 18 : 28),
+
+                          Text(
+                            _status.isEmpty ? l10n.tapMicStart : _status,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: kTextDark,
+                              fontSize: compact ? 24 : 29,
+                              fontWeight: FontWeight.w900,
+                              height: 1.15,
+                            ),
+                          ),
+
+                          SizedBox(height: compact ? 14 : 18),
+
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(compact ? 14 : 18),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: kBrown, width: 1.4),
+                            ),
+                            child: Text(
+                              _spokenText.trim().isEmpty
+                                  ? _exampleText(l10n)
+                                  : _spokenText,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: _spokenText.trim().isEmpty
+                                    ? kTextGrey
+                                    : kTextDark,
+                                fontSize: compact ? 18 : 21,
+                                fontWeight: FontWeight.w800,
+                                height: 1.28,
+                              ),
+                            ),
+                          ),
+                        ] else
+                          SizedBox(height: compact ? 120 : 180),
 
                         SizedBox(height: compact ? 18 : 28),
 
@@ -440,12 +482,14 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                               child: SizedBox(
                                 height: compact ? 52 : 58,
                                 child: ElevatedButton(
-                                  onPressed: () async {
-                                    await _speech.stop();
-                                    await _speech.cancel();
-                                    if (!mounted) return;
-                                    Navigator.pop(context);
-                                  },
+                                  onPressed: _isAddMoreQuestion
+                                      ? _askAnotherSymptom
+                                      : () async {
+                                          await _speech.stop();
+                                          await _speech.cancel();
+                                          if (!mounted) return;
+                                          Navigator.pop(context);
+                                        },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: kTextDark,
@@ -455,7 +499,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                                     ),
                                   ),
                                   child: Text(
-                                    l10n.cancel,
+                                    _isAddMoreQuestion ? l10n.yes : l10n.cancel,
                                     style: TextStyle(
                                       fontSize: compact ? 16 : 18,
                                       fontWeight: FontWeight.w900,
@@ -471,10 +515,12 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                               child: SizedBox(
                                 height: compact ? 52 : 58,
                                 child: ElevatedButton(
-                                  onPressed: _hasText && !_isSending
+                                  onPressed:
+                                      (_isAddMoreQuestion ||
+                                          (_hasText && !_isSending))
                                       ? () async {
-                                          if (_isFinalQuestion) {
-                                            await _sendToApi();
+                                          if (_isAddMoreQuestion) {
+                                            await _showFirstAnswerAlert();
                                           } else {
                                             await _goToNextQuestion();
                                           }
@@ -490,7 +536,9 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                                     ),
                                   ),
                                   child: Text(
-                                    _primaryButtonText,
+                                    _isAddMoreQuestion
+                                        ? l10n.submit
+                                        : _primaryButtonText,
                                     style: TextStyle(
                                       fontSize: compact ? 16 : 18,
                                       fontWeight: FontWeight.w900,
