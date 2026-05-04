@@ -84,6 +84,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apiError => 'API Error';
 
   @override
+  String get micError => 'Mic error';
+
+  @override
+  String get noSpeechMatch =>
+      'I didn\'t catch that. Tap the microphone and try again.';
+
+  @override
   String get ok => 'OK';
 
   @override
@@ -261,6 +268,13 @@ class AppLocalizationsEnYn extends AppLocalizationsEn {
 
   @override
   String get apiError => 'API error';
+
+  @override
+  String get micError => 'Microphone error';
+
+  @override
+  String get noSpeechMatch =>
+      'Dhäruk yaka märram. Gatjuy microphone ga try again.';
 
   @override
   String get ok => 'Manymak';

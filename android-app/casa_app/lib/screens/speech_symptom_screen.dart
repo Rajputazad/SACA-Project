@@ -92,13 +92,18 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
     return allAnswers.join('\n');
   }
 
-  void _goToNextQuestion() {
+  Future<void> _goToNextQuestion() async {
     final answer = _spokenText.trim();
     if (answer.isEmpty) return;
+
+    await _speech.stop();
+
+    if (!mounted) return;
 
     final l10n = AppLocalizations.of(context)!;
 
     setState(() {
+      _isListening = false;
       _answers.add(answer);
       _spokenText = '';
       _status = l10n.tapMicStart;
@@ -110,7 +115,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
       }
     });
 
-    _speakPrompt();
+    await _speakPrompt();
   }
 
   Future<void> _startListening() async {
@@ -121,6 +126,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     await _tts.stop();
+    await _speech.cancel();
 
     if (!mounted) return;
 
@@ -147,7 +153,9 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
         setState(() {
           _isListening = false;
-          _status = '${l10n.apiError}: ${error.errorMsg}';
+          _status = error.errorMsg == 'error_no_match'
+              ? l10n.noSpeechMatch
+              : '${l10n.micError}: ${error.errorMsg}';
         });
       },
     );
@@ -464,9 +472,13 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                                 height: compact ? 52 : 58,
                                 child: ElevatedButton(
                                   onPressed: _hasText && !_isSending
-                                      ? (_isFinalQuestion
-                                            ? _sendToApi
-                                            : _goToNextQuestion)
+                                      ? () async {
+                                          if (_isFinalQuestion) {
+                                            await _sendToApi();
+                                          } else {
+                                            await _goToNextQuestion();
+                                          }
+                                        }
                                       : null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: kBrown,
