@@ -4,8 +4,53 @@ import '../constants/app_colors.dart';
 
 class SacaBottomNav extends StatelessWidget {
   final int currentIndex;
+  final VoidCallback? onHomeTap;
+  final ValueChanged<Locale>? onLocaleChange;
+  final ValueChanged<String>? onLanguageChange;
 
-  const SacaBottomNav({super.key, required this.currentIndex});
+  const SacaBottomNav({
+    super.key,
+    required this.currentIndex,
+    this.onHomeTap,
+    this.onLocaleChange,
+    this.onLanguageChange,
+  });
+
+  void _showLanguagePopup(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(l10n.chooseLanguage),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.chat_bubble_outline_rounded),
+                title: const Text('English'),
+                onTap: () {
+                  onLocaleChange?.call(const Locale('en'));
+                  onLanguageChange?.call('english');
+                  Navigator.pop(dialogContext);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.people_outline_rounded),
+                title: const Text('Yolŋu'),
+                onTap: () {
+                  onLocaleChange?.call(const Locale('en', 'YN'));
+                  onLanguageChange?.call('yolngu');
+                  Navigator.pop(dialogContext);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,18 +76,14 @@ class SacaBottomNav extends StatelessWidget {
         ),
       ],
       onTap: (index) {
-        // Optional navigation logic
-        if (index == currentIndex) return;
-
         switch (index) {
           case 0:
-            Navigator.pushNamed(context, '/home');
+            onHomeTap?.call();
             break;
           case 1:
-            // Navigator.pushNamed(context, '/results');
             break;
           case 2:
-            // Navigator.pushNamed(context, '/settings');
+            _showLanguagePopup(context);
             break;
         }
       },

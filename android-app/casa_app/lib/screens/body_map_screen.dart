@@ -11,11 +11,13 @@ import '../widgets/bottom_nav.dart';
 class BodyMapScreen extends StatefulWidget {
   final bool openKeyboard;
   final String language;
+  final ValueChanged<Locale>? onLocaleChange;
 
   const BodyMapScreen({
     super.key,
     this.openKeyboard = false,
     this.language = 'english',
+    this.onLocaleChange,
   });
 
   @override
@@ -24,6 +26,7 @@ class BodyMapScreen extends StatefulWidget {
 
 class _BodyMapScreenState extends State<BodyMapScreen> {
   final List<Map<String, dynamic>> _selectedSymptoms = [];
+  late String _language;
 
   static const Map<String, String> _yolnguLabels = {
     'General Symptoms': 'General batjpatj dhäwu',
@@ -119,7 +122,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   };
 
   String _label(String value) {
-    if (widget.language != 'yolngu') return value;
+    if (_language != 'yolngu') return value;
     return _yolnguLabels[value] ?? value;
   }
 
@@ -147,6 +150,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   @override
   void initState() {
     super.initState();
+    _language = widget.language;
     _loadSymptomsData();
   }
 
@@ -884,7 +888,16 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
             ),
         ],
       ),
-      bottomNavigationBar: const SacaBottomNav(currentIndex: 0),
+      bottomNavigationBar: SacaBottomNav(
+        currentIndex: 0,
+        onHomeTap: () => Navigator.pop(context),
+        onLocaleChange: widget.onLocaleChange,
+        onLanguageChange: (language) {
+          setState(() {
+            _language = language;
+          });
+        },
+      ),
     );
   }
 }

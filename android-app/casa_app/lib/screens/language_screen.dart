@@ -200,6 +200,7 @@ class _LanguageScreenState extends State<LanguageScreen>
                                       language: _selectedLanguage == 'Yolŋu'
                                           ? 'yolngu'
                                           : 'english',
+                                      onLocaleChange: widget.onLocaleChange,
                                     ),
                                   ),
                                 );
