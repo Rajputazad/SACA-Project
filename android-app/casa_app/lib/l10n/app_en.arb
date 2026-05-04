@@ -24,6 +24,8 @@
   "symptomsLabel": "Symptoms",
   "severityLabel": "Severity",
   "apiError": "API Error",
+  "micError": "Mic error",
+  "noSpeechMatch": "I didn't catch that. Tap the microphone and try again.",
   "ok": "OK",
   "cancel": "Cancel",
   "checking": "Checking...",

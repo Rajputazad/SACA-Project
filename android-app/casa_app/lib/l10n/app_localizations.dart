@@ -247,6 +247,18 @@ abstract class AppLocalizations {
   /// **'API Error'**
   String get apiError;
 
+  /// No description provided for @micError.
+  ///
+  /// In en, this message translates to:
+  /// **'Mic error'**
+  String get micError;
+
+  /// No description provided for @noSpeechMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'I didn\'t catch that. Tap the microphone and try again.'**
+  String get noSpeechMatch;
+
   /// No description provided for @ok.
   ///
   /// In en, this message translates to:

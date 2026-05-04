@@ -25,6 +25,8 @@
   "symptomsLabel": "Batjpatj dhäwu",
   "severityLabel": "Rirri'rirri",
   "apiError": "API error",
+  "micError": "Microphone error",
+  "noSpeechMatch": "Dhäruk yaka märram. Gatjuy microphone ga try again.",
   "ok": "Manymak",
   "cancel": "Yaka",
   "checking": "Nhäma...",
