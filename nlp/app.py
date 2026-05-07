@@ -1,98 +1,61 @@
-from model import train_model, predict
-from speech import get_voice_input
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+from model import predict
 from nlp_processing import extract_symptoms, translate_to_english
-from langdetect import detect
 
-# -----------------------------
-# Language detection
-# -----------------------------
-def detect_language(text):
-    try:
-        lang = detect(text)
-        return "english" if lang == "en" else "yolngu"
-    except:
-        return "yolngu"
+app = FastAPI(title="SACA NLP API")
 
-# -----------------------------
-# Select Language
-# -----------------------------
-def select_language():
-    print("\nSelect input language:")
-    print("1 - English")
-    print("2 - Yolngu")
-    print("3 - Automatic detection")
-    
-    while True:
-        try:
-            choice = int(input("Enter 1, 2, or 3: "))
-            if choice in [1, 2, 3]:
-                return choice
-            else:
-                print("Enter 1, 2, or 3 only.")
-        except ValueError:
-            print("Invalid input.")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# -----------------------------
-# Menu
-# -----------------------------
-def menu():
-    print("\nSACA AI TRIAGE SYSTEM")
-    print("1. Train Model")
-    print("2. Enter Symptoms (Text)")
-    print("3. Enter Symptoms (Voice)")
-    print("4. Exit")
-    print("5. Change Language")
 
-# -----------------------------
-# MAIN PROGRAM
-# -----------------------------
-lang_choice = select_language()
+class TriageRequest(BaseModel):
+    text: str
+    age: int = 30
+    gender: str = "Other"
+    language: str = "english"
 
-while True:
-    menu()
-    choice = input("Select option: ")
 
-    # -------------------------
-    if choice == "1":
-        train_model()
+@app.get("/")
+def home():
+    return {"message": "SACA NLP API running"}
 
-    # -------------------------
-    elif choice == "2":
-        text = input("Enter symptoms: ")
 
-        # Translate only if English
-        if lang_choice == 1:
-            text = translate_to_english(text)
-
-        symptoms = extract_symptoms(text, lang_choice)
-        severity = predict(text)
-
-        print("Symptoms:", symptoms)
-        print("Severity:", severity)
-
-    # -------------------------
-    elif choice == "3":
-        text = get_voice_input()
-
-        if text:
-            if lang_choice == 1:
-                text = translate_to_english(text)
-
-            symptoms = extract_symptoms(text, lang_choice)
-            severity = predict(text)
-
-            print("Symptoms:", symptoms)
-            print("Severity:", severity)
-
-    # -------------------------
-    elif choice == "4":
-        break
-
-    # -------------------------
-    elif choice == "5":
-        lang_choice = select_language()
-        print("Language updated successfully!")
-
-    # -------------------------
+@app.post("/triage")
+def triage(request: TriageRequest):
+    if request.language.lower() == "yolngu":
+        lang_choice = 2
+        processed_text = translate_to_english(request.text)
     else:
-        print("Invalid choice")
+        lang_choice = 1
+        processed_text = request.text
+
+    symptoms = extract_symptoms(processed_text, lang_choice)
+
+    if not symptoms:
+        return {
+            "input_text": request.text,
+            "processed_text": processed_text,
+            "symptoms": [],
+            "severity": "Could not determine",
+            "confidence": {},
+            "recommendation": "Please enter clearer symptoms.",
+        }
+
+    severity = predict(processed_text)
+
+    return {
+        "input_text": request.text,
+        "processed_text": processed_text,
+        "symptoms": symptoms,
+        "severity": severity,
+        "confidence": {},
+        "recommendation": "Basic model prediction",
+    }
