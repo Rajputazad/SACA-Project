@@ -31,7 +31,7 @@ class _SacaAppState extends State<SacaApp> {
       title: 'SACA',
       debugShowCheckedModeBanner: false,
 
-      // 🌍 Language control
+      // Language control
       locale: _locale,
 
       supportedLocales: const [
