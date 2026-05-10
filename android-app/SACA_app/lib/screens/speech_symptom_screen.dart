@@ -487,7 +487,6 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                               ),
                             ),
                             child: SizedBox(
-                              
                               height: compact ? 300 : 400,
                               child: Image.asset(
                                 'assets/images/add_more_symptoms.png',

@@ -1,4 +1,4 @@
-name: casa_app
+name: saca_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -64,6 +64,7 @@ flutter:
   generate: true
   assets:
     - assets/images/
+    - assets/images/symptoms/
     - assets/data/symptoms.json
 
   # To add assets to your application, add an assets section, like this:

@@ -77,11 +77,7 @@ class HomeBgPainter extends CustomPainter {
       Offset(w * 0.88, h * 0.86),
       Offset(w * 0.94, h * 0.88),
     ]) {
-      canvas.drawCircle(
-        d,
-        5,
-        Paint()..color = kDot.withOpacity(0.40),
-      );
+      canvas.drawCircle(d, 5, Paint()..color = kDot.withOpacity(0.40));
     }
   }
 

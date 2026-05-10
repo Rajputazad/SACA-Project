@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:casa_app/l10n/app_localizations.dart';
+import 'package:saca_app/l10n/app_localizations.dart';
 import '../constants/app_colors.dart';
 import 'language_screen.dart';
 

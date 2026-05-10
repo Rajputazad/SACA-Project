@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:casa_app/l10n/app_localizations.dart';
+import 'package:saca_app/l10n/app_localizations.dart';
 
 import 'screens/welcome_screen.dart';
 
@@ -34,10 +34,7 @@ class _SacaAppState extends State<SacaApp> {
       // Language control
       locale: _locale,
 
-      supportedLocales: const [
-        Locale('en'),
-        Locale('en', 'YN'), 
-      ],
+      supportedLocales: const [Locale('en'), Locale('en', 'YN')],
 
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -49,12 +46,17 @@ class _SacaAppState extends State<SacaApp> {
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Georgia',
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
       ),
 
       // 👉 Pass language function to first screen
-      home: WelcomeScreen(
-        onLocaleChange: setLocale,
-      ),
+      home: WelcomeScreen(onLocaleChange: setLocale),
     );
   }
 }

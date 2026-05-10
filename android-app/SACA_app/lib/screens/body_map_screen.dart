@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:casa_app/l10n/app_localizations.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:saca_app/l10n/app_localizations.dart';
 
 import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
@@ -26,7 +27,140 @@ class BodyMapScreen extends StatefulWidget {
 
 class _BodyMapScreenState extends State<BodyMapScreen> {
   final List<Map<String, dynamic>> _selectedSymptoms = [];
+  final FlutterTts _tts = FlutterTts();
   late String _language;
+  bool _showBodyMap = false;
+  Map<String, String>? _pendingLocationSymptom;
+  String? _selectedMapArea;
+  String _readText = 'Select your symptom. Tap an image to start.';
+
+  static const List<Map<String, String>> _symptomChoices = [
+    {
+      'name': 'Anxiety',
+      'image': 'assets/images/symptoms/anxiety.png',
+      'category': 'General Symptoms',
+    },
+    {
+      'name': 'Back pain',
+      'image': 'assets/images/symptoms/back_pain.png',
+      'category': 'Back',
+    },
+    {
+      'name': 'Body pain',
+      'image': 'assets/images/symptoms/joint_pain.png',
+      'category': 'General Symptoms',
+    },
+    {
+      'name': 'Body bleeding',
+      'image': 'assets/images/symptoms/cut.png',
+      'category': 'Skin Symptoms',
+    },
+    {
+      'name': 'Burning skin',
+      'image': 'assets/images/symptoms/burn.png',
+      'category': 'Skin Symptoms',
+    },
+    {
+      'name': 'Chest pain',
+      'image': 'assets/images/symptoms/chest_pain.png',
+      'category': 'Chest',
+    },
+    {
+      'name': 'Cough',
+      'image': 'assets/images/symptoms/cough.png',
+      'category': 'Chest',
+    },
+    {
+      'name': 'Wound',
+      'image': 'assets/images/symptoms/cut.png',
+      'category': 'Skin Symptoms',
+    },
+    {
+      'name': 'Depression',
+      'image': 'assets/images/symptoms/depression.png',
+      'category': 'General Symptoms',
+    },
+    {
+      'name': 'Diarrhea',
+      'image': 'assets/images/symptoms/diarrhoea.png',
+      'category': 'Abdomen',
+    },
+    {
+      'name': 'Ear pain',
+      'image': 'assets/images/symptoms/ear_pain.png',
+      'category': 'Head',
+    },
+    {
+      'name': 'Fainting',
+      'image': 'assets/images/symptoms/faint.png',
+      'category': 'General Symptoms',
+    },
+    {
+      'name': 'Fatigue',
+      'image': 'assets/images/symptoms/fatigue.png',
+      'category': 'General Symptoms',
+    },
+    {
+      'name': 'Dizziness',
+      'image': 'assets/images/symptoms/dizziness.png',
+      'category': 'Head',
+    },
+    {
+      'name': 'Fever',
+      'image': 'assets/images/symptoms/fever.png',
+      'category': 'General Symptoms',
+    },
+    {
+      'name': 'Headache',
+      'image': 'assets/images/symptoms/headache.png',
+      'category': 'Head',
+    },
+    {
+      'name': 'Eye pain',
+      'image': 'assets/images/symptoms/eye_irritation.png',
+      'category': 'Head',
+    },
+    {
+      'name': 'Joint pain',
+      'image': 'assets/images/symptoms/joint_pain.png',
+      'category': 'Legs',
+    },
+    {
+      'name': 'Nausea',
+      'image': 'assets/images/symptoms/nausea.png',
+      'category': 'Abdomen',
+    },
+    {
+      'name': 'Rash',
+      'image': 'assets/images/symptoms/rash.png',
+      'category': 'Skin Symptoms',
+    },
+    {
+      'name': 'Runny nose',
+      'image': 'assets/images/symptoms/running_nose.png',
+      'category': 'Head',
+    },
+    {
+      'name': 'Shortness of breath',
+      'image': 'assets/images/symptoms/shortness_of_breath.png',
+      'category': 'Chest',
+    },
+    {
+      'name': 'Sore throat',
+      'image': 'assets/images/symptoms/sore_throat.png',
+      'category': 'Neck',
+    },
+    {
+      'name': 'Stomach pain',
+      'image': 'assets/images/symptoms/stomach_pain.png',
+      'category': 'Abdomen',
+    },
+    {
+      'name': 'Swelling',
+      'image': 'assets/images/symptoms/swelling.png',
+      'category': 'Skin Symptoms',
+    },
+  ];
 
   static const Map<String, String> _yolnguLabels = {
     'General Symptoms': 'General batjpatj dhäwu',
@@ -156,9 +290,21 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
   @override
   void dispose() {
+    _tts.stop();
     _sheetSearchCtrl.dispose();
     _sheetSearchFocus.dispose();
     super.dispose();
+  }
+
+  Future<void> _readCurrentText([String? text]) async {
+    final words = (text ?? _readText).trim();
+    if (words.isEmpty) return;
+
+    await _tts.stop();
+    await _tts.setLanguage('en-AU');
+    await _tts.setSpeechRate(0.58);
+    await _tts.setPitch(1.0);
+    await _tts.speak(words);
   }
 
   Future<void> _loadSymptomsData() async {
@@ -228,19 +374,41 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
     if (_isLoadingSymptoms) return;
 
     final size = Size(constraints.maxWidth, constraints.maxHeight);
-
     final norm = Offset(
       details.localPosition.dx / size.width,
       details.localPosition.dy / size.height,
     );
 
     for (final entry in _bodyParts.entries) {
-      if (entry.value.contains(norm)) {
-        _sheetSearchFocus.unfocus();
+      if (!entry.value.contains(norm)) continue;
 
-        _showSymptomFlowSheet(initialCategory: _categoryForBodyPart(entry.key));
-        break;
+      _sheetSearchFocus.unfocus();
+      final exactBodyPart = entry.key;
+      final categoryBodyPart = _categoryForBodyPart(entry.key);
+      final pending = _pendingLocationSymptom;
+
+      if (pending != null) {
+        setState(() {
+          _selectedMapArea = exactBodyPart;
+          _readText =
+              'Selected ${_label(exactBodyPart)}. Now answer the questions.';
+        });
+        Future.delayed(const Duration(milliseconds: 550), () {
+          if (!mounted || _pendingLocationSymptom != pending) return;
+          setState(() {
+            _showBodyMap = false;
+            _pendingLocationSymptom = null;
+            _selectedMapArea = null;
+          });
+          _openSymptomQuestionSheet(pending, exactBodyPart);
+        });
+      } else {
+        setState(() {
+          _selectedMapArea = exactBodyPart;
+        });
+        _showSymptomFlowSheet(initialCategory: categoryBodyPart);
       }
+      break;
     }
   }
 
@@ -519,8 +687,8 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kBrown,
-                            disabledBackgroundColor: kBrownLight.withOpacity(
-                              0.5,
+                            disabledBackgroundColor: kBrownLight.withValues(
+                              alpha: 0.5,
                             ),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
@@ -643,7 +811,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
           divisions: 2,
           label: levelText,
           activeColor: kBrown,
-          inactiveColor: kBrownLight.withOpacity(0.35),
+          inactiveColor: kBrownLight.withValues(alpha: 0.35),
           onChanged: onLevelChanged,
         ),
 
@@ -761,6 +929,851 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
     );
   }
 
+  bool _needsBodyMap(String symptom) {
+    final value = symptom.toLowerCase();
+    return value == 'body pain' || value == 'body bleeding';
+  }
+
+  List<String> _locationOptions(String symptom) {
+    final value = symptom.toLowerCase();
+    if (value.contains('back pain') ||
+        value.contains('chest pain') ||
+        value.contains('ear pain') ||
+        value.contains('joint pain') ||
+        value.contains('eye pain')) {
+      return const ['Left side', 'Right side', 'Both sides'];
+    }
+    if (value.contains('stomach pain')) {
+      return const ['Upper stomach', 'Lower stomach', 'Whole stomach'];
+    }
+    return const [];
+  }
+
+  List<String> _questionOptions(String symptom) {
+    final options = _symptomTypes[symptom];
+    if (options != null && options.isNotEmpty) return options;
+
+    final lower = symptom.toLowerCase();
+    if (lower.contains('anxiety')) {
+      return ['Worried or nervous', 'Panic feeling', 'Trouble sleeping'];
+    }
+    if (lower.contains('depression')) {
+      return ['Feeling sad', 'No interest', 'Low energy'];
+    }
+    if (lower.contains('rash')) {
+      return ['Itchy rash', 'Red rash', 'Painful rash'];
+    }
+    if (lower.contains('body bleeding')) {
+      return ['Small bleeding', 'Heavy bleeding', 'Bleeding with pain'];
+    }
+    if (lower.contains('wound')) {
+      return ['Small cut', 'Deep cut', 'Bleeding wound'];
+    }
+    if (lower.contains('burn')) {
+      return ['Small burn', 'Hot red burn', 'Blister burn'];
+    }
+    if (lower.contains('swelling')) {
+      return ['Mild swelling', 'Hot swelling', 'Painful swelling'];
+    }
+    if (lower.contains('shortness')) {
+      return ['After walking', 'While resting', 'With chest pain'];
+    }
+    if (lower.contains('faint')) {
+      return ['Felt like fainting', 'Fainted once', 'Fainted more than once'];
+    }
+    return ['Mild', 'Moderate', 'Severe'];
+  }
+
+  List<Map<String, dynamic>> _questionsForSymptom(
+    String symptom,
+    String? bodyLocation,
+  ) {
+    final locationOptions = _locationOptions(symptom);
+    final questions = <Map<String, dynamic>>[
+      {
+        'key': 'type',
+        'title': 'What type of ${_label(symptom).toLowerCase()}?',
+        'options': _questionOptions(symptom),
+      },
+    ];
+
+    if (bodyLocation != null) {
+      questions.add({
+        'key': 'location',
+        'title': 'Confirm the body area',
+        'options': [bodyLocation],
+      });
+    } else if (locationOptions.isNotEmpty) {
+      questions.add({
+        'key': 'location',
+        'title': 'Which side is the problem on?',
+        'options': locationOptions,
+      });
+    }
+
+    questions.addAll([
+      {
+        'key': 'duration',
+        'title': 'How long has this been happening?',
+        'options': ['Today', '1-2 days', '3+ days', '1 week+'],
+      },
+      {
+        'key': 'trigger',
+        'title': 'When do you feel it most?',
+        'options': _triggerOptions(symptom),
+      },
+      {'key': 'intensity', 'title': 'How strong is it?', 'type': 'scale'},
+      {
+        'key': 'medicine',
+        'title': 'Have you taken any medicine?',
+        'options': ['No', 'Yes'],
+      },
+      {
+        'key': 'notes',
+        'title': 'Anything else you want to add?',
+        'type': 'text',
+      },
+      {
+        'key': 'addMore',
+        'title': 'Do you want to add more symptoms?',
+        'options': ['Yes', 'No'],
+      },
+    ]);
+
+    return questions;
+  }
+
+  List<String> _triggerOptions(String symptom) {
+    final value = symptom.toLowerCase();
+    if (value.contains('cough') || value.contains('shortness')) {
+      return const [
+        'While resting',
+        'After walking',
+        'At night',
+        'All the time',
+      ];
+    }
+    if (value.contains('stomach') ||
+        value.contains('nausea') ||
+        value.contains('diarrhea')) {
+      return const [
+        'After eating',
+        'Before eating',
+        'At night',
+        'All the time',
+      ];
+    }
+    if (value.contains('pain')) {
+      return const [
+        'When moving',
+        'When resting',
+        'When touched',
+        'All the time',
+      ];
+    }
+    if (value.contains('anxiety') || value.contains('depression')) {
+      return const ['Morning', 'Night', 'Around people', 'Most of the day'];
+    }
+    return const ['Always there', 'Comes and goes', 'At night', 'Not sure'];
+  }
+
+  void _handleSymptomChoice(Map<String, String> symptom) {
+    if (_needsBodyMap(symptom['name'] ?? '')) {
+      setState(() {
+        _pendingLocationSymptom = symptom;
+        _showBodyMap = true;
+      });
+      return;
+    }
+
+    _openSymptomQuestionSheet(symptom, null);
+  }
+
+  void _openSymptomQuestionSheet(
+    Map<String, String> symptom,
+    String? bodyLocation,
+  ) {
+    final name = symptom['name'] ?? '';
+    final image = symptom['image'] ?? '';
+    final questions = _questionsForSymptom(name, bodyLocation);
+    final answers = <String, dynamic>{'symptom': name, 'level': 5};
+    final notesController = TextEditingController();
+    var step = 0;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: kBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (sheetContext, setSheetState) {
+            final question = questions[step];
+            final key = question['key'].toString();
+            final isLast = step == questions.length - 1;
+
+            void finish({required bool addMore}) {
+              answers['notes'] = notesController.text.trim();
+              setState(() {
+                _selectedSymptoms.add({
+                  'symptom': name,
+                  'type': answers['type'] ?? '',
+                  'location': answers['location'] ?? 'Not selected',
+                  'duration': answers['duration'] ?? '',
+                  'trigger': answers['trigger'] ?? '',
+                  'level': '${answers['level'] ?? 5}/10',
+                  'medicine': answers['medicine'] ?? 'No',
+                  'notes': answers['notes'] ?? '',
+                });
+                _readText = addMore
+                    ? 'Select another symptom.'
+                    : 'Symptoms submitted.';
+              });
+              Navigator.pop(sheetContext);
+
+              if (!addMore) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Symptoms submitted')),
+                );
+              }
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 12,
+                bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+              ),
+              child: SizedBox(
+                height: MediaQuery.of(sheetContext).size.height * 0.86,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 55,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.black12,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Hero(
+                          tag: image,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(18),
+                            child: Image.asset(
+                              image,
+                              width: 76,
+                              height: 76,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _label(name),
+                                style: const TextStyle(
+                                  color: kTextDark,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              if (bodyLocation != null) ...[
+                                const SizedBox(height: 6),
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 240),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: kCardSelected,
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(color: kBrown),
+                                  ),
+                                  child: Text(
+                                    'Selected area: ${_label(bodyLocation)}',
+                                    style: const TextStyle(
+                                      color: kBrown,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 8),
+                              LinearProgressIndicator(
+                                value: (step + 1) / questions.length,
+                                minHeight: 7,
+                                color: kBrown,
+                                backgroundColor: kBrownLight.withValues(
+                                  alpha: 0.25,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 260),
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0.08, 0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: _singleQuestionPage(
+                          key: ValueKey('$name-$step'),
+                          question: question,
+                          answer: answers[key],
+                          notesController: notesController,
+                          onAnswer: (value) {
+                            setSheetState(() {
+                              answers[key] = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: step == 0
+                                ? () => Navigator.pop(sheetContext)
+                                : () => setSheetState(() => step--),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(step == 0 ? 'Cancel' : 'Back'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              final options = question['options'];
+                              if (options is List &&
+                                  options.isNotEmpty &&
+                                  answers[key] == null) {
+                                answers[key] = options.first;
+                              }
+                              if (isLast) {
+                                finish(addMore: answers['addMore'] == 'Yes');
+                                return;
+                              }
+                              setSheetState(() => step++);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kBrown,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              isLast ? 'Done' : 'Next',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    ).whenComplete(notesController.dispose);
+  }
+
+  Widget _singleQuestionPage({
+    required Key key,
+    required Map<String, dynamic> question,
+    required dynamic answer,
+    required TextEditingController notesController,
+    required ValueChanged<dynamic> onAnswer,
+  }) {
+    final type = question['type']?.toString();
+    final title = question['title'].toString();
+
+    return Container(
+      key: key,
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: kTextDark,
+              fontSize: 25,
+              fontWeight: FontWeight.w900,
+              height: 1.15,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Expanded(
+            child: type == 'scale'
+                ? _scaleQuestion(answer: answer, onAnswer: onAnswer)
+                : type == 'text'
+                ? _textQuestion(notesController)
+                : _optionQuestion(
+                    options: List<String>.from(question['options'] as List),
+                    answer: answer?.toString(),
+                    onAnswer: onAnswer,
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _optionQuestion({
+    required List<String> options,
+    required String? answer,
+    required ValueChanged<String> onAnswer,
+  }) {
+    return ListView.separated(
+      itemCount: options.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final option = options[index];
+        final selected = answer == option || (answer == null && index == 0);
+        return TweenAnimationBuilder<double>(
+          duration: Duration(milliseconds: 180 + index * 45),
+          tween: Tween(begin: 0, end: 1),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Opacity(
+              opacity: value,
+              child: Transform.translate(
+                offset: Offset(18 * (1 - value), 0),
+                child: child,
+              ),
+            );
+          },
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: () => onAnswer(option),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                color: selected ? kCardSelected : const Color(0xFFF8F5F0),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: selected ? kBrown : Colors.black12,
+                  width: selected ? 2 : 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _label(option),
+                      style: TextStyle(
+                        color: selected ? kBrown : kTextDark,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    selected ? Icons.check_circle : Icons.circle_outlined,
+                    color: selected ? kBrown : kTextGrey,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _scaleQuestion({
+    required dynamic answer,
+    required ValueChanged<int> onAnswer,
+  }) {
+    final value = answer is int ? answer : 5;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AnimatedScale(
+          scale: 1 + (value / 70),
+          duration: const Duration(milliseconds: 180),
+          child: Text(
+            '$value/10',
+            style: const TextStyle(
+              color: kBrown,
+              fontSize: 54,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        const SizedBox(height: 22),
+        Slider(
+          value: value.toDouble(),
+          min: 1,
+          max: 10,
+          divisions: 9,
+          label: '$value/10',
+          activeColor: kBrown,
+          inactiveColor: kBrownLight.withValues(alpha: 0.35),
+          onChanged: (newValue) => onAnswer(newValue.round()),
+        ),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [Text('1 mild'), Text('5'), Text('10 strong')],
+        ),
+      ],
+    );
+  }
+
+  Widget _textQuestion(TextEditingController controller) {
+    return Column(
+      children: [
+        TextField(
+          controller: controller,
+          minLines: 6,
+          maxLines: 8,
+          decoration: InputDecoration(
+            hintText: 'Optional note',
+            filled: true,
+            fillColor: const Color(0xFFF8F5F0),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _topNavBar({
+    required String title,
+    required String readText,
+    VoidCallback? onBack,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 14,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: onBack ?? () => Navigator.pop(context),
+              icon: Icon(
+                onBack == null ? Icons.home_rounded : Icons.arrow_back_ios_new,
+                color: kBrown,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: kTextDark,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            IconButton.filledTonal(
+              tooltip: 'Read text',
+              onPressed: () => _readCurrentText(readText),
+              icon: const Icon(Icons.record_voice_over_rounded),
+              color: kBrown,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _symptomGridView(AppLocalizations l10n, bool hasSymptoms) {
+    const screenText =
+        'Select your symptom. Tap an image, then answer one question at a time.';
+    _readText = screenText;
+
+    return Column(
+      children: [
+        _topNavBar(title: 'Select Symptoms', readText: screenText),
+        const SizedBox(height: 8),
+        const Text(
+          'Select your symptom',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: kBrown,
+            fontSize: 30,
+            fontWeight: FontWeight.w900,
+            height: 1.1,
+          ),
+        ),
+        const SizedBox(height: 6),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            'Tap an image, then answer one question at a time',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: kTextDark, fontSize: 15),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Expanded(
+          child: GridView.builder(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, hasSymptoms ? 86 : 18),
+            itemCount: _symptomChoices.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.82,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 14,
+            ),
+            itemBuilder: (context, index) {
+              final item = _symptomChoices[index];
+              return TweenAnimationBuilder<double>(
+                duration: Duration(milliseconds: 260 + (index % 8) * 45),
+                tween: Tween(begin: 0, end: 1),
+                curve: Curves.easeOutBack,
+                builder: (context, value, child) {
+                  return Opacity(
+                    opacity: value.clamp(0, 1),
+                    child: Transform.translate(
+                      offset: Offset(0, 18 * (1 - value)),
+                      child: Transform.scale(
+                        scale: 0.94 + (value * 0.06),
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+                child: _symptomCard(item),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _symptomCard(Map<String, String> item) {
+    final name = item['name'] ?? '';
+    final image = item['image'] ?? '';
+    final needsLocation =
+        _needsBodyMap(name) || _locationOptions(name).isNotEmpty;
+
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.08),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () => _handleSymptomChoice(item),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Hero(
+                  tag: image,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.asset(image, fit: BoxFit.cover),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                _label(name),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: kTextDark,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
+                  height: 1.1,
+                ),
+              ),
+              if (needsLocation)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    _needsBodyMap(name) ? 'Choose on map' : 'Choose side',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: kBrown,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _bodyLocationView(AppLocalizations l10n, bool hasSymptoms) {
+    final title =
+        'Where is the ${_label(_pendingLocationSymptom?['name'] ?? 'problem')}?';
+    final readText = _selectedMapArea == null
+        ? '$title Tap the body area so we know the location.'
+        : 'Selected ${_label(_selectedMapArea!)}.';
+    _readText = readText;
+
+    return Column(
+      children: [
+        _topNavBar(
+          title: 'Body Map',
+          readText: readText,
+          onBack: () {
+            setState(() {
+              _showBodyMap = false;
+              _pendingLocationSymptom = null;
+              _selectedMapArea = null;
+            });
+          },
+        ),
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: kBrown,
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
+            height: 1.15,
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'Tap the body area so we know the location',
+          style: TextStyle(color: kTextDark, fontSize: 15),
+        ),
+        const SizedBox(height: 10),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 240),
+          transitionBuilder: (child, animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: ScaleTransition(scale: animation, child: child),
+            );
+          },
+          child: _selectedMapArea == null
+              ? const SizedBox(height: 38)
+              : Container(
+                  key: ValueKey(_selectedMapArea),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 9,
+                  ),
+                  decoration: BoxDecoration(
+                    color: kCardSelected,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: kBrown),
+                  ),
+                  child: Text(
+                    'Selected: ${_label(_selectedMapArea!)}',
+                    style: const TextStyle(
+                      color: kBrown,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(left: 10, right: 10, bottom: 8),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return GestureDetector(
+                  onTapDown: (details) => _onBodyTap(details, constraints),
+                  child: TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 320),
+                    tween: Tween(begin: 0.96, end: 1),
+                    curve: Curves.easeOutCubic,
+                    builder: (context, value, child) {
+                      return Transform.scale(scale: value, child: child);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        'assets/images/body_map.png',
+                        fit: BoxFit.contain,
+                        width: constraints.maxWidth,
+                        height: constraints.maxHeight,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasSymptoms = _selectedSymptoms.isNotEmpty;
@@ -774,98 +1787,17 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
             size: MediaQuery.of(context).size,
             painter: BgDecorationPainter(),
           ),
-
           SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: GestureDetector(
-                    onTap: _isLoadingSymptoms ? null : _showSymptomFlowSheet,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.search_rounded, color: kTextGrey),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              l10n.exampleHeadache,
-                              style: const TextStyle(
-                                color: kTextGrey,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                Text(
-                  l10n.wherePain,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: kBrown,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w900,
-                    height: 1.2,
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-
-                Text(
-                  l10n.tapBodyArea,
-                  style: const TextStyle(color: kTextDark, fontSize: 15),
-                ),
-
-                const SizedBox(height: 12),
-
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 24,
-                      right: 24,
-                      bottom: hasSymptoms ? 80 : 8,
-                    ),
-                    child: SingleChildScrollView(
-                      child: SizedBox(
-                        height: 680,
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return GestureDetector(
-                              onTapDown: (details) {
-                                _onBodyTap(details, constraints);
-                              },
-                              child: Image.asset(
-                                'assets/images/body.png',
-                                fit: BoxFit.contain,
-                                width: constraints.maxWidth,
-                                height: constraints.maxHeight,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 280),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              child: _showBodyMap
+                  ? _bodyLocationView(l10n, hasSymptoms)
+                  : _symptomGridView(l10n, hasSymptoms),
             ),
           ),
-
-          if (hasSymptoms)
+          if (hasSymptoms && !_showBodyMap)
             Positioned(
               left: 16,
               right: 16,
@@ -888,16 +1820,18 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
             ),
         ],
       ),
-      bottomNavigationBar: SacaBottomNav(
-        currentIndex: 0,
-        onHomeTap: () => Navigator.pop(context),
-        onLocaleChange: widget.onLocaleChange,
-        onLanguageChange: (language) {
-          setState(() {
-            _language = language;
-          });
-        },
-      ),
+      bottomNavigationBar: _showBodyMap
+          ? null
+          : SacaBottomNav(
+              currentIndex: 0,
+              onHomeTap: () => Navigator.pop(context),
+              onLocaleChange: widget.onLocaleChange,
+              onLanguageChange: (language) {
+                setState(() {
+                  _language = language;
+                });
+              },
+            ),
     );
   }
 }

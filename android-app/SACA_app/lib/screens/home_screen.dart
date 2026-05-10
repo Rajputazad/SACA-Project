@@ -3,7 +3,7 @@ import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../widgets/bottom_nav.dart';
 import 'body_map_screen.dart';
-import 'package:casa_app/l10n/app_localizations.dart';
+import 'package:saca_app/l10n/app_localizations.dart';
 import 'speech_symptom_screen.dart';
 
 class HomeScreen extends StatefulWidget {

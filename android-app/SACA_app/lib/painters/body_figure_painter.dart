@@ -12,9 +12,7 @@ class BodyFigurePainter extends CustomPainter {
 
     void drawPart(Path path, String name, Color color) {
       final paint = Paint()
-        ..color = selected.contains(name)
-            ? const Color(0xFFFF6B35)
-            : color;
+        ..color = selected.contains(name) ? const Color(0xFFFF6B35) : color;
 
       canvas.drawPath(path, paint);
 
@@ -29,11 +27,13 @@ class BodyFigurePainter extends CustomPainter {
 
     // HEAD
     drawPart(
-      Path()
-        ..addOval(Rect.fromCenter(
-            center: Offset(w * 0.5, h * 0.08),
-            width: w * 0.22,
-            height: h * 0.1)),
+      Path()..addOval(
+        Rect.fromCenter(
+          center: Offset(w * 0.5, h * 0.08),
+          width: w * 0.22,
+          height: h * 0.1,
+        ),
+      ),
       "Head",
       Colors.brown,
     );

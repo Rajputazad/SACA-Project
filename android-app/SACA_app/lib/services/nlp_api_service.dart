@@ -14,10 +14,7 @@ class NlpApiService {
     final response = await http.post(
       Uri.parse('$baseUrl/triage'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'text': text,
-        'language': language,
-      }),
+      body: jsonEncode({'text': text, 'language': language}),
     );
 
     if (response.statusCode != 200) {

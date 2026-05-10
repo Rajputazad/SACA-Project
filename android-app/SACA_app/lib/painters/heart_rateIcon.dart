@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-
 const Color kBackground = Color(0xFFE8D9C8);
 const Color kBrown = Color(0xFF8B4513);
 const Color kBrownLight = Color(0xFFD4956A);
@@ -10,6 +9,7 @@ const Color kCardBg = Color(0xFFF5EDE0);
 const Color kDot = Color(0xFFC4A882);
 const Color kTextDark = Color(0xFF2A1A08);
 const Color kTextGrey = Color(0xFF999080);
+
 // ─── Heart Rate Icon ───────────────────────────────────────────────────────────
 class HeartRateIcon extends StatelessWidget {
   final double size;

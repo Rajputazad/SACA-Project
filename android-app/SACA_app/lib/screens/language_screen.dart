@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:casa_app/l10n/app_localizations.dart';
+import 'package:saca_app/l10n/app_localizations.dart';
 
 import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
