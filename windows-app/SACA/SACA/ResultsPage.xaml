@@ -1,0 +1,40 @@
+<Page
+    x:Class="SACA.ResultsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Background="#FDFBF8" Padding="40">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="25" MaxWidth="500">
+
+            <Border Background="#9C3A21" CornerRadius="15" Padding="12,6" HorizontalAlignment="Center">
+                <TextBlock Text="High Severity" Foreground="White" FontWeight="Bold" FontSize="14"/>
+            </Border>
+
+            <TextBlock Text="Potential Match: Acute Respiratory Distress" 
+                       FontSize="22" FontWeight="Bold" TextAlignment="Center" TextWrapping="Wrap"/>
+
+            <TextBlock Text="Based on your inputs of Shortness of Breath and a pain intensity of 7/10, your symptoms require attention." 
+                       TextAlignment="Center" Foreground="#5F5A54" TextWrapping="Wrap" FontSize="16"/>
+
+            <Border Background="#E6C39A" CornerRadius="15" Padding="25">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Next Steps &amp; Suggestions:" FontWeight="Bold" FontSize="16" Foreground="#3E2723"/>
+                    <TextBlock Text="• Sit upright and try to remain calm." Foreground="#3E2723"/>
+                    <TextBlock Text="• Contact your local health clinic or 000 if breathing worsens." Foreground="#3E2723"/>
+                    <TextBlock Text="• Notify a family member or community elder." Foreground="#3E2723"/>
+                </StackPanel>
+            </Border>
+
+            <Grid ColumnSpacing="15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Call Health Worker" Background="#C05A33" Foreground="White" 
+                        HorizontalAlignment="Stretch" Height="50" CornerRadius="25"/>
+                <Button Grid.Column="1" Content="Done" Click="Done_Click"
+                        HorizontalAlignment="Stretch" Height="50" CornerRadius="25" BorderBrush="#A89E94" BorderThickness="1"/>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

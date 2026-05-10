@@ -1,0 +1,211 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Folder of things\\Codes\\SACA\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\voiceassessmentpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\voiceassessmentpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\voiceassessmentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\voiceassessmentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\resultspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\resultspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\resultspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\resultspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\languageselectpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\languageselectpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|c:\\users\\rafid\\.nuget\\packages\\microsoft.windowsappsdk.foundation\\2.0.20\\include\\deploymentmanagerautoinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Folder of things\\Codes\\SACA\\SACA\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\LanguageSelectPage.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:SACA\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\LanguageSelectPage.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\languageselectpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\languageselectpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\saca.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\saca.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|d:\\folder of things\\codes\\saca\\saca\\dashboardpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{50A7BA48-01E6-A1D9-CAE7-ED69318FB5B3}|SACA\\SACA.csproj|solutionrelative:saca\\dashboardpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ResultsPage.xaml.cs",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\ResultsPage.xaml.cs",
+              "RelativeDocumentMoniker": "SACA\\ResultsPage.xaml.cs",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\ResultsPage.xaml.cs",
+              "RelativeToolTip": "SACA\\ResultsPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T19:15:05.214Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ResultsPage.xaml",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\ResultsPage.xaml",
+              "RelativeDocumentMoniker": "SACA\\ResultsPage.xaml",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\ResultsPage.xaml",
+              "RelativeToolTip": "SACA\\ResultsPage.xaml",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAAAB4AAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-06T19:14:56.52Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "VoiceAssessmentPage.xaml.cs",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\VoiceAssessmentPage.xaml.cs",
+              "RelativeDocumentMoniker": "SACA\\VoiceAssessmentPage.xaml.cs",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\VoiceAssessmentPage.xaml.cs",
+              "RelativeToolTip": "SACA\\VoiceAssessmentPage.xaml.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAYwE4AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T19:14:07.163Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "VoiceAssessmentPage.xaml",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\VoiceAssessmentPage.xaml",
+              "RelativeDocumentMoniker": "SACA\\VoiceAssessmentPage.xaml",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\VoiceAssessmentPage.xaml",
+              "RelativeToolTip": "SACA\\VoiceAssessmentPage.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-06T19:13:40.962Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DeploymentManagerAutoInitializer.cs",
+              "DocumentMoniker": "C:\\Users\\rafid\\.nuget\\packages\\microsoft.windowsappsdk.foundation\\2.0.20\\include\\DeploymentManagerAutoInitializer.cs",
+              "ToolTip": "C:\\Users\\rafid\\.nuget\\packages\\microsoft.windowsappsdk.foundation\\2.0.20\\include\\DeploymentManagerAutoInitializer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T15:54:01.419Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LanguageSelectPage.xaml.cs",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\LanguageSelectPage.xaml.cs",
+              "RelativeDocumentMoniker": "SACA\\LanguageSelectPage.xaml.cs",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\LanguageSelectPage.xaml.cs",
+              "RelativeToolTip": "SACA\\LanguageSelectPage.xaml.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T15:53:58.331Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "LanguageSelectPage.g.cs",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\LanguageSelectPage.g.cs",
+              "RelativeDocumentMoniker": "SACA\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\LanguageSelectPage.g.cs",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\LanguageSelectPage.g.cs",
+              "RelativeToolTip": "SACA\\obj\\x64\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\LanguageSelectPage.g.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAB0AAABYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T15:53:39.37Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "SACA.csproj",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\SACA.csproj",
+              "RelativeDocumentMoniker": "SACA\\SACA.csproj",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\SACA.csproj",
+              "RelativeToolTip": "SACA\\SACA.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-05-06T15:52:20.774Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LanguageSelectPage.xaml",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\LanguageSelectPage.xaml",
+              "RelativeDocumentMoniker": "SACA\\LanguageSelectPage.xaml",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\LanguageSelectPage.xaml",
+              "RelativeToolTip": "SACA\\LanguageSelectPage.xaml",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAAAB4AAABVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-06T15:52:40.713Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "DashboardPage.xaml",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\DashboardPage.xaml",
+              "RelativeDocumentMoniker": "SACA\\DashboardPage.xaml",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\DashboardPage.xaml",
+              "RelativeToolTip": "SACA\\DashboardPage.xaml",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-06T14:51:06.141Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "SACA\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\MainWindow.xaml.cs",
+              "RelativeToolTip": "SACA\\MainWindow.xaml.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAvwCAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T03:44:21.782Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\Folder of things\\Codes\\SACA\\SACA\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "SACA\\MainWindow.xaml",
+              "ToolTip": "D:\\Folder of things\\Codes\\SACA\\SACA\\MainWindow.xaml",
+              "RelativeToolTip": "SACA\\MainWindow.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-06T03:40:40.755Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+<Page
+    x:Class="SACA.LanguageSelectPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#1A1512">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+        <StackPanel Grid.Row="0" Margin="0,60,0,40" HorizontalAlignment="Center">
+            <TextBlock Text="TIRP Health" Foreground="White" FontSize="28" FontWeight="Bold"/>
+            <TextBlock Text="Connecting culture and care" Foreground="#D1C7BD" FontSize="18" Margin="0,10,0,0"/>
+        </StackPanel>
+
+        <!-- Language Selection Cards -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+            <Button Width="280" Height="320" CornerRadius="25" Background="#FDFBF8" Click="Language_Selected">
+                <StackPanel Spacing="15">
+                    <TextBlock Text="💬" FontSize="50" HorizontalAlignment="Center"/>
+                    <TextBlock Text="English" Foreground="#3E2723" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Width="280" Height="320" CornerRadius="25" Background="#FDFBF8" Click="Language_Selected">
+                <StackPanel Spacing="15">
+                    <TextBlock Text="☀️" FontSize="50" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Yolŋu Matha" Foreground="#3E2723" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <!-- Footer Acknowledgement -->
+        <TextBlock Grid.Row="2" Margin="40" TextWrapping="Wrap" TextAlignment="Center" Foreground="#A89E94" FontSize="12"
+                   Text="We acknowledge the Traditional Custodians of the lands on which we work and live..."/>
+    </Grid>
+</Page>

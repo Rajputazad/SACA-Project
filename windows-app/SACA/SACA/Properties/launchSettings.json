@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SACA (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "SACA (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

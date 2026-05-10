@@ -1,0 +1,59 @@
+﻿<Page
+    x:Class="SACA.VoiceAssessmentPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#FDFBF8">
+
+    <Grid Padding="40">
+        <StackPanel MaxWidth="600" HorizontalAlignment="Center" Spacing="25">
+
+            <StackPanel Spacing="5">
+                <TextBlock Text="New Assessment" Foreground="Gray" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Text="Voice Assessment" FontSize="28" FontWeight="Bold" Foreground="#3E2723" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <Grid Height="150" Width="150" HorizontalAlignment="Center">
+                <Ellipse x:ConnectionId='6' x:Name="RecordingRing" Stroke="#C05A33" StrokeThickness="3" StrokeDashArray="4,2"/>
+                <FontIcon Glyph="&#xE720;" FontSize="48" Foreground="#C05A33" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
+
+            <TextBlock x:ConnectionId='2' x:Name="StatusText" Text="Ready to listen" FontSize="16" HorizontalAlignment="Center" Foreground="#795548"/>
+            
+            <Border Background="White" BorderBrush="#E9E2D8" BorderThickness="1" CornerRadius="12" Padding="15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="TRANSCRIBED SYMPTOMS" 
+                   FontSize="11" 
+                   FontWeight="Bold" 
+                   Foreground="#A89E94" 
+                   CharacterSpacing="100"/>
+
+                    <TextBox x:ConnectionId='5' x:Name="SpeechToTextBox" 
+                 PlaceholderText="Speak now to see your symptoms here..."
+                 TextWrapping="Wrap" 
+                 AcceptsReturn="True" 
+                 MinHeight="120"
+                 FontSize="16"
+                 BorderThickness="0"
+                 Background="Transparent"
+                 Foreground="#3E2723" 
+                 PlaceholderForeground="#A89E94"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Spacing="15" Margin="0,10,0,0">
+                <Button x:ConnectionId='3' x:Name="RecordButton" Content="Start Recording" 
+                                                  
+                        Background="#C05A33" Foreground="White" 
+                        Width="250" Height="50" CornerRadius="25"/>
+
+                <Button x:ConnectionId='4' x:Name="SubmitButton" Content="Submit Assessment" 
+                        IsEnabled="False"                     
+                        BorderBrush="#C05A33" BorderThickness="1" Foreground="#C05A33" 
+                        Width="250" Height="50" CornerRadius="25"/>
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Page>
+

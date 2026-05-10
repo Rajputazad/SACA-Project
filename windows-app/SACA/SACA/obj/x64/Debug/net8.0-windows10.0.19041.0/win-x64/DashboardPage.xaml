@@ -1,0 +1,50 @@
+﻿<Page
+    x:Class="SACA.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <NavigationView x:ConnectionId='2' x:Name="NavView" PaneDisplayMode="Left" IsSettingsVisible="False">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Icon="Home" Content="Dashboard" Tag="home"/>
+            <NavigationViewItem Icon="Add" Content="New Assessment" Tag="new"/>
+        </NavigationView.MenuItems>
+
+        <ScrollViewer Padding="30">
+            <StackPanel Spacing="20">
+                <TextBlock Text="Health Overview" Style="{StaticResource TitleTextBlockStyle}"/>
+                <TextBlock Text="Welcome back, Sarah. Your vitals are looking stable." Foreground="Gray"/>
+
+                <Grid ColumnSpacing="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Health Score Card -->
+                    <Border Grid.Column="0" Background="#C05A33" CornerRadius="15" Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Health Score" Foreground="White" FontSize="16"/>
+                            <TextBlock Text="84%" Foreground="White" FontSize="48" FontWeight="Bold"/>
+                            <TextBlock Text="Stable trend" Foreground="#FFD7BE"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Local Update Card -->
+                    <Border Grid.Column="1" Background="#E9E2D8" CornerRadius="15" Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Local Update" FontWeight="Bold"/>
+                            <TextBlock Text="Melbourne air quality is slightly lower today. Remember your inhaler." TextWrapping="Wrap" Margin="0,10"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <TextBlock Text="Recent Health Logs" FontWeight="Bold" Margin="0,10,0,0"/>
+                <ListView SelectionMode="None">
+                    <ListViewItem Content="Body Map: Left Arm - Today, 9:45 AM"/>
+                    <ListViewItem Content="Medication: Ventolin - Yesterday, 8:00 PM"/>
+                </ListView>
+            </StackPanel>
+        </ScrollViewer>
+    </NavigationView>
+</Page>
+
