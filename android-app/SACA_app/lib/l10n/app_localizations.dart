@@ -480,6 +480,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I agree to share my health information'**
   String get agreeHealthInfo;
+
+  /// No description provided for @whatAreYouFeeling.
+  ///
+  /// In en, this message translates to:
+  /// **'What are you feeling?'**
+  String get whatAreYouFeeling;
+
+  /// No description provided for @typeNaturallyExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Type naturally, for example: I am having fever'**
+  String get typeNaturallyExample;
+
+  /// No description provided for @typeYourSymptomsHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your symptoms here...'**
+  String get typeYourSymptomsHere;
+
+  /// No description provided for @suggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions'**
+  String get suggestions;
+
+  /// No description provided for @typedSymptomsSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Typed symptoms submitted'**
+  String get typedSymptomsSubmitted;
+
+  /// No description provided for @typedSymptomsSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Typed Symptoms'**
+  String get typedSymptomsSheetTitle;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @describeSymptomDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your symptom in more detail'**
+  String get describeSymptomDetail;
+
+  /// No description provided for @howLongHappening.
+  ///
+  /// In en, this message translates to:
+  /// **'How long has this been happening?'**
+  String get howLongHappening;
+
+  /// No description provided for @howStrongIsIt.
+  ///
+  /// In en, this message translates to:
+  /// **'How strong is it?'**
+  String get howStrongIsIt;
+
+  /// No description provided for @descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: I feel hot and tired...'**
+  String get descriptionHint;
+
+  /// No description provided for @durationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Or type: since morning, two days, one week...'**
+  String get durationHint;
+
+  /// No description provided for @intensityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type anything about the pain level...'**
+  String get intensityHint;
+
+  /// No description provided for @medicineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type medicine name or extra detail...'**
+  String get medicineHint;
+
+  /// No description provided for @finalNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type any final note before submit...'**
+  String get finalNoteHint;
+
+  /// No description provided for @oneMild.
+  ///
+  /// In en, this message translates to:
+  /// **'1 mild'**
+  String get oneMild;
+
+  /// No description provided for @medicineLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get medicineLabel;
+
+  /// No description provided for @selectSymptoms.
+  ///
+  /// In en, this message translates to:
+  /// **'Select symptoms'**
+  String get selectSymptoms;
+
+  /// No description provided for @selectYourSymptom.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your symptom'**
+  String get selectYourSymptom;
+
+  /// No description provided for @tapImageAnswerOneAtATime.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap an image, then answer one question at a time'**
+  String get tapImageAnswerOneAtATime;
+
+  /// No description provided for @chooseOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose on map'**
+  String get chooseOnMap;
+
+  /// No description provided for @chooseSide.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose side'**
+  String get chooseSide;
+
+  /// No description provided for @whenFeelMost.
+  ///
+  /// In en, this message translates to:
+  /// **'When do you feel it most?'**
+  String get whenFeelMost;
+
+  /// No description provided for @anythingElseAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything else you want to add?'**
+  String get anythingElseAdd;
+
+  /// No description provided for @chooseNumberFromOneToTen.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a number from 1 to 10.'**
+  String get chooseNumberFromOneToTen;
+
+  /// No description provided for @optionalQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'This is optional.'**
+  String get optionalQuestion;
+
+  /// No description provided for @optionsAre.
+  ///
+  /// In en, this message translates to:
+  /// **'Options are'**
+  String get optionsAre;
+
+  /// No description provided for @selectAnotherSymptom.
+  ///
+  /// In en, this message translates to:
+  /// **'Select another symptom.'**
+  String get selectAnotherSymptom;
+
+  /// No description provided for @selectedArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected area'**
+  String get selectedArea;
+
+  /// No description provided for @optionalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional note'**
+  String get optionalNote;
+
+  /// No description provided for @symptomsSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Symptoms submitted'**
+  String get symptomsSubmitted;
 }
 
 class _AppLocalizationsDelegate

@@ -977,11 +977,12 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   List<Map<String, dynamic>> _questionsForSymptom(
     String symptom,
     String? bodyLocation,
+    AppLocalizations l10n,
   ) {
     final questions = <Map<String, dynamic>>[
       {
         'key': 'type',
-        'title': 'What type of ${_label(symptom).toLowerCase()}?',
+        'title': '${l10n.whatTypeOf} ${_label(symptom).toLowerCase()}?',
         'options': _questionOptions(symptom),
       },
     ];
@@ -1003,28 +1004,24 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
     questions.addAll([
       {
         'key': 'duration',
-        'title': 'How long has this been happening?',
+        'title': l10n.howLongHappening,
         'options': ['Today', '1-2 days', '3+ days', '1 week+'],
       },
       {
         'key': 'trigger',
-        'title': 'When do you feel it most?',
+        'title': l10n.whenFeelMost,
         'options': _triggerOptions(symptom),
       },
-      {'key': 'intensity', 'title': 'How strong is it?', 'type': 'scale'},
+      {'key': 'intensity', 'title': l10n.howStrongIsIt, 'type': 'scale'},
       {
         'key': 'medicine',
-        'title': 'Have you taken any medicine?',
+        'title': l10n.medicineQuestion,
         'options': ['No', 'Yes'],
       },
-      {
-        'key': 'notes',
-        'title': 'Anything else you want to add?',
-        'type': 'text',
-      },
+      {'key': 'notes', 'title': l10n.anythingElseAdd, 'type': 'text'},
       {
         'key': 'addMore',
-        'title': 'Do you want to add more symptoms?',
+        'title': l10n.addMoreSymptomsQuestion,
         'options': ['Yes', 'No'],
       },
     ]);
@@ -1084,7 +1081,8 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   ) {
     final name = symptom['name'] ?? '';
     final image = symptom['image'] ?? '';
-    final questions = _questionsForSymptom(name, bodyLocation);
+    final l10n = AppLocalizations.of(context)!;
+    final questions = _questionsForSymptom(name, bodyLocation, l10n);
     final answers = <String, dynamic>{'symptom': name, 'level': 5};
     final notesController = TextEditingController();
     var step = 0;
@@ -1107,14 +1105,14 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
               final title = question['title'].toString();
               final type = question['type']?.toString();
               if (type == 'scale') {
-                return '$title Choose a number from 1 to 10.';
+                return '$title ${l10n.chooseNumberFromOneToTen}';
               }
               if (type == 'text') {
-                return '$title This is optional.';
+                return '$title ${l10n.optionalQuestion}';
               }
               final options = question['options'];
               if (options is List && options.isNotEmpty) {
-                return '$title Options are ${options.join(', ')}.';
+                return '$title ${l10n.optionsAre} ${options.join(', ')}.';
               }
               return title;
             }
@@ -1133,15 +1131,15 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                   'notes': answers['notes'] ?? '',
                 });
                 _readText = addMore
-                    ? 'Select another symptom.'
-                    : 'Symptoms submitted.';
+                    ? l10n.selectAnotherSymptom
+                    : l10n.symptomsSubmitted;
               });
               Navigator.pop(sheetContext);
 
               if (!addMore) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Symptoms submitted')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.symptomsSubmitted)));
               }
             }
 
@@ -1223,7 +1221,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                                     border: Border.all(color: kBrown),
                                   ),
                                   child: Text(
-                                    'Selected area: ${_label(bodyLocation)}',
+                                    '${l10n.selectedArea}: ${_label(bodyLocation)}',
                                     style: const TextStyle(
                                       color: kBrown,
                                       fontSize: 13,
@@ -1290,7 +1288,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
-                            child: Text(step == 0 ? 'Cancel' : 'Back'),
+                            child: Text(step == 0 ? l10n.cancel : l10n.back),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -1318,7 +1316,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                               ),
                             ),
                             child: Text(
-                              isLast ? 'Done' : 'Next',
+                              isLast ? l10n.done : l10n.next,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w900,
                               ),
@@ -1484,9 +1482,13 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
           inactiveColor: kBrownLight.withValues(alpha: 0.35),
           onChanged: (newValue) => onAnswer(newValue.round()),
         ),
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text('1 mild'), Text('5'), Text('10 strong')],
+          children: [
+            Text(AppLocalizations.of(context)!.oneMild),
+            const Text('5'),
+            const Text('10 strong'),
+          ],
         ),
       ],
     );
@@ -1500,7 +1502,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
           minLines: 6,
           maxLines: 8,
           decoration: InputDecoration(
-            hintText: 'Optional note',
+            hintText: AppLocalizations.of(context)!.optionalNote,
             filled: true,
             fillColor: const Color(0xFFF8F5F0),
             border: OutlineInputBorder(
@@ -1568,18 +1570,18 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   }
 
   Widget _symptomGridView(AppLocalizations l10n, bool hasSymptoms) {
-    const screenText =
-        'Select your symptom. Tap an image, then answer one question at a time.';
+    final screenText =
+        '${l10n.selectYourSymptom}. ${l10n.tapImageAnswerOneAtATime}';
     _readText = screenText;
 
     return Column(
       children: [
-        _topNavBar(title: 'Select Symptoms', readText: screenText),
+        _topNavBar(title: l10n.selectSymptoms, readText: screenText),
         const SizedBox(height: 8),
-        const Text(
-          'Select your symptom',
+        Text(
+          l10n.selectYourSymptom,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: kBrown,
             fontSize: 30,
             fontWeight: FontWeight.w900,
@@ -1587,12 +1589,12 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
           ),
         ),
         const SizedBox(height: 6),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            'Tap an image, then answer one question at a time',
+            l10n.tapImageAnswerOneAtATime,
             textAlign: TextAlign.center,
-            style: TextStyle(color: kTextDark, fontSize: 15),
+            style: const TextStyle(color: kTextDark, fontSize: 15),
           ),
         ),
         const SizedBox(height: 12),
@@ -1624,7 +1626,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                     ),
                   );
                 },
-                child: _symptomCard(item),
+                child: _symptomCard(item, l10n),
               );
             },
           ),
@@ -1633,7 +1635,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
     );
   }
 
-  Widget _symptomCard(Map<String, String> item) {
+  Widget _symptomCard(Map<String, String> item, AppLocalizations l10n) {
     final name = item['name'] ?? '';
     final image = item['image'] ?? '';
     final needsLocation =
@@ -1678,7 +1680,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    _needsBodyMap(name) ? 'Choose on map' : 'Choose side',
+                    _needsBodyMap(name) ? l10n.chooseOnMap : l10n.chooseSide,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: kBrown,

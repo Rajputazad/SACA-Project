@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
-import '../widgets/bottom_nav.dart';
+import '../l10n/app_localizations.dart';
 
 class TypeSymptomsScreen extends StatefulWidget {
   final String language;
@@ -24,6 +24,14 @@ class TypeSymptomsScreen extends StatefulWidget {
 class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
   final TextEditingController _symptomController = TextEditingController();
   final TextEditingController _answerController = TextEditingController();
+  final TextEditingController _durationAnswerController =
+      TextEditingController();
+  final TextEditingController _intensityAnswerController =
+      TextEditingController();
+  final TextEditingController _medicineAnswerController =
+      TextEditingController();
+  final TextEditingController _addMoreAnswerController =
+      TextEditingController();
   final List<Map<String, dynamic>> _typedSymptoms = [];
 
   List<String> _allSymptoms = [];
@@ -45,6 +53,10 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
   void dispose() {
     _symptomController.dispose();
     _answerController.dispose();
+    _durationAnswerController.dispose();
+    _intensityAnswerController.dispose();
+    _medicineAnswerController.dispose();
+    _addMoreAnswerController.dispose();
     super.dispose();
   }
 
@@ -105,6 +117,10 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
       _addMoreChoice = 'Submit';
       _intensity = 5;
       _answerController.clear();
+      _durationAnswerController.clear();
+      _intensityAnswerController.clear();
+      _medicineAnswerController.clear();
+      _addMoreAnswerController.clear();
     });
   }
 
@@ -113,24 +129,37 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
       _typedSymptoms.add({
         'symptom': _selectedSymptom,
         'description': _answerController.text.trim(),
-        'duration': _selectedDuration,
-        'level': '${_intensity.round()}/10',
-        'medicine': _selectedMedicine,
+        'duration': _durationAnswerController.text.trim().isEmpty
+            ? _selectedDuration
+            : _durationAnswerController.text.trim(),
+        'level': _intensityAnswerController.text.trim().isEmpty
+            ? '${_intensity.round()}/10'
+            : '${_intensity.round()}/10 - ${_intensityAnswerController.text.trim()}',
+        'medicine': _medicineAnswerController.text.trim().isEmpty
+            ? _selectedMedicine
+            : '$_selectedMedicine - ${_medicineAnswerController.text.trim()}',
+        'addMoreNote': _addMoreAnswerController.text.trim(),
         'typed': _symptomController.text.trim(),
       });
 
       _isQuestionFlow = false;
       _step = 0;
       _answerController.clear();
+      _durationAnswerController.clear();
+      _intensityAnswerController.clear();
+      _medicineAnswerController.clear();
+      _addMoreAnswerController.clear();
       if (addMore) {
         _symptomController.clear();
       }
     });
 
     if (!addMore) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Typed symptoms submitted')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.typedSymptomsSubmitted),
+        ),
+      );
     }
   }
 
@@ -143,6 +172,8 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
   }
 
   Widget _topBar() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
       child: Container(
@@ -173,9 +204,9 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
                 color: kBrown,
               ),
             ),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Type Symptoms',
+                l10n.typeSymptoms,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: kTextDark,
@@ -189,7 +220,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
               child: _typedSymptoms.isEmpty
                   ? null
                   : IconButton(
-                      tooltip: 'Typed symptoms',
+                      tooltip: l10n.typedSymptomsSheetTitle,
                       onPressed: _showTypedSymptoms,
                       icon: const Icon(Icons.receipt_long_outlined),
                       color: kBrown,
@@ -202,6 +233,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
   }
 
   Widget _typingView() {
+    final l10n = AppLocalizations.of(context)!;
     final suggestions = _suggestions();
 
     return Column(
@@ -213,7 +245,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(22, 0, 22, 4),
           child: Text(
-            'What are you feeling?',
+            l10n.whatAreYouFeeling,
             style: const TextStyle(
               color: kBrown,
               fontSize: 26,
@@ -225,7 +257,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(22, 2, 22, 10),
           child: Text(
-            'Type naturally, for example: I am having fever',
+            l10n.typeNaturallyExample,
             style: const TextStyle(color: kTextDark, fontSize: 14),
           ),
         ),
@@ -241,7 +273,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
             textInputAction: TextInputAction.done,
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
-              hintText: 'Type your symptoms here...',
+              hintText: l10n.typeYourSymptomsHere,
               prefixIcon: const Icon(Icons.search, color: kBrown),
               filled: true,
               fillColor: Colors.white,
@@ -261,7 +293,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
           child: Text(
-            'Suggestions',
+            l10n.suggestions,
             style: const TextStyle(
               color: kTextDark,
               fontSize: 17,
@@ -275,12 +307,11 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
             child: ListView.separated(
-              keyboardDismissBehavior:
-                  ScrollViewKeyboardDismissBehavior.onDrag,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               // No container/clip — plain list with clear item cards
               padding: const EdgeInsets.only(bottom: 8),
               itemCount: suggestions.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final symptom = suggestions[index];
                 return Material(
@@ -342,8 +373,8 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
                   borderRadius: BorderRadius.circular(18),
                 ),
               ),
-              child: const Text(
-                'Continue',
+              child: Text(
+                l10n.continueText,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
               ),
             ),
@@ -354,12 +385,13 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
   }
 
   Widget _questionView() {
+    final l10n = AppLocalizations.of(context)!;
     final titles = [
-      'Describe your symptom in more detail',
-      'How long has this been happening?',
-      'How strong is it?',
-      'Have you taken any medicine?',
-      'Do you want to add more symptoms?',
+      l10n.describeSymptomDetail,
+      l10n.howLongHappening,
+      l10n.howStrongIsIt,
+      l10n.medicineQuestion,
+      l10n.addMoreSymptomsQuestion,
     ];
 
     return Column(
@@ -439,7 +471,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: Text(_step == 0 ? 'Cancel' : 'Back'),
+                  child: Text(_step == 0 ? l10n.cancel : l10n.back),
                 ),
               ),
               const SizedBox(width: 12),
@@ -455,7 +487,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
                     ),
                   ),
                   child: Text(
-                    _step == 4 ? 'Done' : 'Next',
+                    _step == 4 ? l10n.done : l10n.next,
                     style: const TextStyle(fontWeight: FontWeight.w900),
                   ),
                 ),
@@ -468,13 +500,15 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
   }
 
   Widget _questionBody() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_step == 0) {
       return TextField(
         controller: _answerController,
         minLines: 4,
         maxLines: 5,
         decoration: InputDecoration(
-          hintText: 'Example: I feel hot and tired...',
+          hintText: l10n.descriptionHint,
           filled: true,
           fillColor: const Color(0xFFF8F5F0),
           border: OutlineInputBorder(
@@ -486,22 +520,39 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
     }
 
     if (_step == 1) {
-      return _optionList(
-        ['Today', '1-2 days', '3+ days', '1 week+'],
-        _selectedDuration,
-        (value) => setState(() => _selectedDuration = value),
+      return Column(
+        children: [
+          _answerBox(
+            controller: _durationAnswerController,
+            hintText: l10n.durationHint,
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: _optionList(
+              ['Today', '1-2 days', '3+ days', '1 week+'],
+              _selectedDuration,
+              (value) => setState(() => _selectedDuration = value),
+            ),
+          ),
+        ],
       );
     }
 
     if (_step == 2) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      return ListView(
+        padding: EdgeInsets.zero,
         children: [
+          _answerBox(
+            controller: _intensityAnswerController,
+            hintText: l10n.intensityHint,
+          ),
+          const SizedBox(height: 14),
           AnimatedScale(
             scale: 1 + (_intensity / 70),
             duration: const Duration(milliseconds: 180),
             child: Text(
               '${_intensity.round()}/10',
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 color: kBrown,
                 fontSize: 54,
@@ -519,26 +570,77 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
             inactiveColor: kBrownLight.withValues(alpha: 0.35),
             onChanged: (value) => setState(() => _intensity = value),
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('1 mild'), Text('5'), Text('10 strong')],
+            children: [
+              Text(l10n.oneMild),
+              const Text('5'),
+              const Text('10 strong'),
+            ],
           ),
         ],
       );
     }
 
     if (_step == 3) {
-      return _optionList(
-        ['No', 'Yes'],
-        _selectedMedicine,
-        (value) => setState(() => _selectedMedicine = value),
+      return Column(
+        children: [
+          _answerBox(
+            controller: _medicineAnswerController,
+            hintText: l10n.medicineHint,
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: _optionList(
+              ['No', 'Yes'],
+              _selectedMedicine,
+              (value) => setState(() => _selectedMedicine = value),
+            ),
+          ),
+        ],
       );
     }
 
-    return _optionList(
-      ['Yes, add more', 'Submit'],
-      _addMoreChoice,
-      (value) => setState(() => _addMoreChoice = value),
+    return Column(
+      children: [
+        _answerBox(
+          controller: _addMoreAnswerController,
+          hintText: l10n.finalNoteHint,
+        ),
+        const SizedBox(height: 12),
+        Expanded(
+          child: _optionList(
+            ['Yes, add more', 'Submit'],
+            _addMoreChoice,
+            (value) => setState(() => _addMoreChoice = value),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _answerBox({
+    required TextEditingController controller,
+    required String hintText,
+  }) {
+    return TextField(
+      controller: controller,
+      minLines: 1,
+      maxLines: 2,
+      textInputAction: TextInputAction.done,
+      decoration: InputDecoration(
+        hintText: hintText,
+        filled: true,
+        fillColor: const Color(0xFFF8F5F0),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+      ),
     );
   }
 
@@ -591,6 +693,8 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
   }
 
   void _showTypedSymptoms() {
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -603,8 +707,8 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Typed Symptoms',
+              Text(
+                l10n.typedSymptomsSheetTitle,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 12),
@@ -616,7 +720,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
                     return ListTile(
                       title: Text(item['symptom'].toString()),
                       subtitle: Text(
-                        'Intensity: ${item['level']} • Medicine: ${item['medicine']}',
+                        '${l10n.intensity}: ${item['level']} • ${l10n.medicineLabel}: ${item['medicine']}',
                       ),
                     );
                   },

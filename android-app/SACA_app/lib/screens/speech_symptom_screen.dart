@@ -85,6 +85,38 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
   bool get _isAddMoreQuestion => _questionStep == 3;
 
+  bool _isYesAnswer(String value) {
+    final answer = value.trim().toLowerCase();
+    return answer == 'yes' ||
+        answer.contains('yes') ||
+        answer == 'yo' ||
+        answer.contains('add more');
+  }
+
+  bool _isSubmitAnswer(String value) {
+    final answer = value.trim().toLowerCase();
+    return answer == 'submit' ||
+        answer.contains('submit') ||
+        answer == 'no' ||
+        answer.contains('no') ||
+        answer.contains('done') ||
+        answer.contains('finish');
+  }
+
+  Future<void> _handleAddMoreVoiceAnswer([String? spoken]) async {
+    final answer = (spoken ?? _spokenText).trim();
+    if (answer.isEmpty) return;
+
+    if (_isYesAnswer(answer)) {
+      await _askAnotherSymptom();
+      return;
+    }
+
+    if (_isSubmitAnswer(answer)) {
+      await _showSymptomsAlert();
+    }
+  }
+
   String _questionText(AppLocalizations l10n) {
     if (_questionStep == 1) return l10n.symptomDetailsQuestion;
     if (_questionStep == 2) return l10n.medicineQuestion;
@@ -222,6 +254,10 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
           setState(() {
             _spokenText = words;
           });
+
+          if (_isAddMoreQuestion && result.finalResult) {
+            _handleAddMoreVoiceAnswer(words);
+          }
         }
       },
     );
@@ -386,114 +422,93 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
 
                         SizedBox(height: compact ? 16 : 22),
 
-                        if (!_isAddMoreQuestion) ...[
-                          GestureDetector(
-                            onTap: _isListening
-                                ? _stopListening
-                                : _startListening,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                  width: micOuter,
-                                  height: micOuter,
-                                  decoration: BoxDecoration(
-                                    color: kBrownLight.withOpacity(0.18),
-                                    shape: BoxShape.circle,
-                                  ),
+                        GestureDetector(
+                          onTap: _isListening
+                              ? _stopListening
+                              : _startListening,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: micOuter,
+                                height: micOuter,
+                                decoration: BoxDecoration(
+                                  color: kBrownLight.withOpacity(0.18),
+                                  shape: BoxShape.circle,
                                 ),
-                                Container(
-                                  width: micMiddle,
-                                  height: micMiddle,
-                                  decoration: BoxDecoration(
-                                    color: kBrownLight.withOpacity(0.28),
-                                    shape: BoxShape.circle,
-                                  ),
+                              ),
+                              Container(
+                                width: micMiddle,
+                                height: micMiddle,
+                                decoration: BoxDecoration(
+                                  color: kBrownLight.withOpacity(0.28),
+                                  shape: BoxShape.circle,
                                 ),
-                                Container(
-                                  width: micInner,
-                                  height: micInner,
-                                  decoration: BoxDecoration(
-                                    color: kBrown,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: kBrown.withOpacity(0.35),
-                                        blurRadius: 22,
-                                        offset: const Offset(0, 10),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    _isListening ? Icons.mic : Icons.mic_none,
-                                    color: Colors.white,
-                                    size: compact ? 50 : 60,
-                                  ),
+                              ),
+                              Container(
+                                width: micInner,
+                                height: micInner,
+                                decoration: BoxDecoration(
+                                  color: kBrown,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: kBrown.withOpacity(0.35),
+                                      blurRadius: 22,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                                child: Icon(
+                                  _isListening ? Icons.mic : Icons.mic_none,
+                                  color: Colors.white,
+                                  size: compact ? 50 : 60,
+                                ),
+                              ),
+                            ],
                           ),
+                        ),
 
-                          SizedBox(height: compact ? 18 : 28),
+                        SizedBox(height: compact ? 18 : 28),
 
-                          Text(
-                            _status.isEmpty ? l10n.tapMicStart : _status,
+                        Text(
+                          _status.isEmpty ? l10n.tapMicStart : _status,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: kTextDark,
+                            fontSize: compact ? 24 : 29,
+                            fontWeight: FontWeight.w900,
+                            height: 1.15,
+                          ),
+                        ),
+
+                        SizedBox(height: compact ? 14 : 18),
+
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(compact ? 14 : 18),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: kBrown, width: 1.4),
+                          ),
+                          child: Text(
+                            _spokenText.trim().isEmpty
+                                ? (_isAddMoreQuestion
+                                      ? '${l10n.yes} / ${l10n.submit}'
+                                      : _exampleText(l10n))
+                                : _spokenText,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: kTextDark,
-                              fontSize: compact ? 24 : 29,
-                              fontWeight: FontWeight.w900,
-                              height: 1.15,
+                              color: _spokenText.trim().isEmpty
+                                  ? kTextGrey
+                                  : kTextDark,
+                              fontSize: compact ? 18 : 21,
+                              fontWeight: FontWeight.w800,
+                              height: 1.28,
                             ),
                           ),
-
-                          SizedBox(height: compact ? 14 : 18),
-
-                          Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(compact ? 14 : 18),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: kBrown, width: 1.4),
-                            ),
-                            child: Text(
-                              _spokenText.trim().isEmpty
-                                  ? _exampleText(l10n)
-                                  : _spokenText,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: _spokenText.trim().isEmpty
-                                    ? kTextGrey
-                                    : kTextDark,
-                                fontSize: compact ? 18 : 21,
-                                fontWeight: FontWeight.w800,
-                                height: 1.28,
-                              ),
-                            ),
-                          ),
-                        ] else
-                          Container(
-                            // width: double.infinity,
-                            // padding: EdgeInsets.symmetric(
-                            //   horizontal: compact ? 18 : 24,
-                            //   vertical: compact ? 18 : 24,
-                            // ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.82),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: kBrownLight.withOpacity(0.45),
-                              ),
-                            ),
-                            child: SizedBox(
-                              height: compact ? 300 : 400,
-                              child: Image.asset(
-                                'assets/images/add_more_symptoms.png',
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
+                        ),
 
                         SizedBox(height: compact ? 18 : 28),
 
@@ -541,7 +556,11 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
                                           (_hasText && !_isSending))
                                       ? () async {
                                           if (_isAddMoreQuestion) {
-                                            await _showSymptomsAlert();
+                                            if (_isYesAnswer(_spokenText)) {
+                                              await _askAnotherSymptom();
+                                            } else {
+                                              await _showSymptomsAlert();
+                                            }
                                           } else {
                                             await _goToNextQuestion();
                                           }

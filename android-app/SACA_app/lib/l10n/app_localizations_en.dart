@@ -200,6 +200,101 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agreeHealthInfo => 'I agree to share my health information';
+
+  @override
+  String get whatAreYouFeeling => 'What are you feeling?';
+
+  @override
+  String get typeNaturallyExample =>
+      'Type naturally, for example: I am having fever';
+
+  @override
+  String get typeYourSymptomsHere => 'Type your symptoms here...';
+
+  @override
+  String get suggestions => 'Suggestions';
+
+  @override
+  String get typedSymptomsSubmitted => 'Typed symptoms submitted';
+
+  @override
+  String get typedSymptomsSheetTitle => 'Typed Symptoms';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get describeSymptomDetail => 'Describe your symptom in more detail';
+
+  @override
+  String get howLongHappening => 'How long has this been happening?';
+
+  @override
+  String get howStrongIsIt => 'How strong is it?';
+
+  @override
+  String get descriptionHint => 'Example: I feel hot and tired...';
+
+  @override
+  String get durationHint => 'Or type: since morning, two days, one week...';
+
+  @override
+  String get intensityHint => 'Type anything about the pain level...';
+
+  @override
+  String get medicineHint => 'Type medicine name or extra detail...';
+
+  @override
+  String get finalNoteHint => 'Type any final note before submit...';
+
+  @override
+  String get oneMild => '1 mild';
+
+  @override
+  String get medicineLabel => 'Medicine';
+
+  @override
+  String get selectSymptoms => 'Select symptoms';
+
+  @override
+  String get selectYourSymptom => 'Select your symptom';
+
+  @override
+  String get tapImageAnswerOneAtATime =>
+      'Tap an image, then answer one question at a time';
+
+  @override
+  String get chooseOnMap => 'Choose on map';
+
+  @override
+  String get chooseSide => 'Choose side';
+
+  @override
+  String get whenFeelMost => 'When do you feel it most?';
+
+  @override
+  String get anythingElseAdd => 'Anything else you want to add?';
+
+  @override
+  String get chooseNumberFromOneToTen => 'Choose a number from 1 to 10.';
+
+  @override
+  String get optionalQuestion => 'This is optional.';
+
+  @override
+  String get optionsAre => 'Options are';
+
+  @override
+  String get selectAnotherSymptom => 'Select another symptom.';
+
+  @override
+  String get selectedArea => 'Selected area';
+
+  @override
+  String get optionalNote => 'Optional note';
+
+  @override
+  String get symptomsSubmitted => 'Symptoms submitted';
 }
 
 /// The translations for English (`en_YN`).
@@ -398,4 +493,98 @@ class AppLocalizationsEnYn extends AppLocalizationsEn {
 
   @override
   String get agreeHealthInfo => 'Ŋarra yakaŋu walŋa dhäwu nhäma.';
+
+  @override
+  String get whatAreYouFeeling => 'Nhä nhe walŋa nhakun?';
+
+  @override
+  String get typeNaturallyExample => 'Dhäruk ŋurrkan, example: ŋarra fever';
+
+  @override
+  String get typeYourSymptomsHere => 'Dhäruk ŋurrkan dhuwal...';
+
+  @override
+  String get suggestions => 'Nhäma nhirrpan';
+
+  @override
+  String get typedSymptomsSubmitted => 'Batjpatj dhäwu nhirrpan';
+
+  @override
+  String get typedSymptomsSheetTitle => 'Dhäruk batjpatj dhäwu';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get describeSymptomDetail => 'Dhäwu batjpatj more';
+
+  @override
+  String get howLongHappening => 'When dhuwal started?';
+
+  @override
+  String get howStrongIsIt => 'How strong dhuwal?';
+
+  @override
+  String get descriptionHint => 'Example: ŋarra feel hot ga tired...';
+
+  @override
+  String get durationHint => 'Type: dhiyaŋ morning, two days...';
+
+  @override
+  String get intensityHint => 'Type pain level dhäwu...';
+
+  @override
+  String get medicineHint => 'Type medicine name or extra detail...';
+
+  @override
+  String get finalNoteHint => 'Type final note before submit...';
+
+  @override
+  String get oneMild => '1 mild';
+
+  @override
+  String get medicineLabel => 'Medicine';
+
+  @override
+  String get selectSymptoms => 'Nhäma nhirrpan batjpatj dhäwu';
+
+  @override
+  String get selectYourSymptom => 'Nhäma nhirrpan nhe batjpatj dhäwu';
+
+  @override
+  String get tapImageAnswerOneAtATime =>
+      'Gatjuy image, ŋuli answer one question at a time';
+
+  @override
+  String get chooseOnMap => 'Nhäma nhirrpan mapŋur';
+
+  @override
+  String get chooseSide => 'Nhäma nhirrpan side';
+
+  @override
+  String get whenFeelMost => 'When nhe feel dhuwal most?';
+
+  @override
+  String get anythingElseAdd => 'Ŋarra add more dhäwu?';
+
+  @override
+  String get chooseNumberFromOneToTen => 'Nhäma number 1 to 10.';
+
+  @override
+  String get optionalQuestion => 'Dhuwal optional.';
+
+  @override
+  String get optionsAre => 'Options';
+
+  @override
+  String get selectAnotherSymptom => 'Nhäma nhirrpan another batjpatj dhäwu.';
+
+  @override
+  String get selectedArea => 'Selected wäŋa';
+
+  @override
+  String get optionalNote => 'Optional note';
+
+  @override
+  String get symptomsSubmitted => 'Batjpatj dhäwu submitted';
 }
