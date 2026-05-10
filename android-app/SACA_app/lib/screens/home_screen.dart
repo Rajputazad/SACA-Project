@@ -5,6 +5,7 @@ import '../widgets/bottom_nav.dart';
 import 'body_map_screen.dart';
 import 'package:saca_app/l10n/app_localizations.dart';
 import 'speech_symptom_screen.dart';
+import 'type_symptoms_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String language;
@@ -261,8 +262,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => BodyMapScreen(
-                                      openKeyboard: true,
+                                    builder: (_) => TypeSymptomsScreen(
                                       language: _language,
                                       onLocaleChange: widget.onLocaleChange,
                                     ),
@@ -281,7 +281,6 @@ class _HomeScreenState extends State<HomeScreen>
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => BodyMapScreen(
-                                      openKeyboard: false,
                                       language: _language,
                                       onLocaleChange: widget.onLocaleChange,
                                     ),

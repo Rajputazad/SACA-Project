@@ -10,13 +10,11 @@ import '../painters/bg_decoration_painter.dart';
 import '../widgets/bottom_nav.dart';
 
 class BodyMapScreen extends StatefulWidget {
-  final bool openKeyboard;
   final String language;
   final ValueChanged<Locale>? onLocaleChange;
 
   const BodyMapScreen({
     super.key,
-    this.openKeyboard = false,
     this.language = 'english',
     this.onLocaleChange,
   });
@@ -267,7 +265,6 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   Map<String, List<String>> _symptomTypes = {};
 
   bool _isLoadingSymptoms = true;
-  bool _openedSheetOnce = false;
 
   static const Map<String, Rect> _bodyParts = {
     'Head': Rect.fromLTWH(0.38, 0.02, 0.24, 0.12),
@@ -329,15 +326,6 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
         _isLoadingSymptoms = false;
       });
-
-      if (widget.openKeyboard && !_openedSheetOnce && mounted) {
-        _openedSheetOnce = true;
-
-        Future.delayed(const Duration(milliseconds: 700), () {
-          if (!mounted) return;
-          _showSymptomFlowSheet();
-        });
-      }
     } catch (e) {
       setState(() {
         _isLoadingSymptoms = false;
@@ -990,7 +978,6 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
     String symptom,
     String? bodyLocation,
   ) {
-    final locationOptions = _locationOptions(symptom);
     final questions = <Map<String, dynamic>>[
       {
         'key': 'type',
