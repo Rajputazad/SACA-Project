@@ -931,7 +931,9 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
   bool _needsBodyMap(String symptom) {
     final value = symptom.toLowerCase();
-    return value == 'body pain' || value == 'body bleeding';
+    return value == 'body pain' ||
+        value == 'body bleeding' ||
+        value == 'swelling';
   }
 
   List<String> _locationOptions(String symptom) {
@@ -997,19 +999,19 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
       },
     ];
 
-    if (bodyLocation != null) {
-      questions.add({
-        'key': 'location',
-        'title': 'Confirm the body area',
-        'options': [bodyLocation],
-      });
-    } else if (locationOptions.isNotEmpty) {
-      questions.add({
-        'key': 'location',
-        'title': 'Which side is the problem on?',
-        'options': locationOptions,
-      });
-    }
+    // if (bodyLocation != null) {
+    //   questions.add({
+    //     'key': 'location',
+    //     'title': 'Confirm the body area',
+    //     'options': [bodyLocation],
+    //   });
+    // } else if (locationOptions.isNotEmpty) {
+    //   questions.add({
+    //     'key': 'location',
+    //     'title': 'Which side is the problem on?',
+    //     'options': locationOptions,
+    //   });
+    // }
 
     questions.addAll([
       {
@@ -1114,6 +1116,22 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
             final key = question['key'].toString();
             final isLast = step == questions.length - 1;
 
+            String questionReadText() {
+              final title = question['title'].toString();
+              final type = question['type']?.toString();
+              if (type == 'scale') {
+                return '$title Choose a number from 1 to 10.';
+              }
+              if (type == 'text') {
+                return '$title This is optional.';
+              }
+              final options = question['options'];
+              if (options is List && options.isNotEmpty) {
+                return '$title Options are ${options.join(', ')}.';
+              }
+              return title;
+            }
+
             void finish({required bool addMore}) {
               answers['notes'] = notesController.text.trim();
               setState(() {
@@ -1179,13 +1197,30 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                _label(name),
-                                style: const TextStyle(
-                                  color: kTextDark,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      _label(name),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: kTextDark,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton.filledTonal(
+                                    tooltip: 'Read aloud',
+                                    onPressed: () =>
+                                        _readCurrentText(questionReadText()),
+                                    icon: const Icon(
+                                      Icons.record_voice_over_rounded,
+                                    ),
+                                    color: kBrown,
+                                  ),
+                                ],
                               ),
                               if (bodyLocation != null) ...[
                                 const SizedBox(height: 6),
