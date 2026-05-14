@@ -1,0 +1,1 @@
+ /Users/azadsingh/SACA-Project/android-app/casa_app/lib/l10n/app_localizations_en.dart /Users/azadsingh/SACA-Project/android-app/casa_app/lib/l10n/app_localizations.dart:  /Users/azadsingh/SACA-Project/android-app/casa_app/l10n.yaml /Users/azadsingh/SACA-Project/android-app/casa_app/lib/l10n/app_en.arb /Users/azadsingh/SACA-Project/android-app/casa_app/lib/l10n/app_en_YN.arb

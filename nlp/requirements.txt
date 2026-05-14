@@ -1,0 +1,9 @@
+pandas
+scikit-learn
+nltk
+speechrecognition
+pyaudio
+langdetect
+googletrans==4.0.0-rc1
+fastapi
+uvicorn
