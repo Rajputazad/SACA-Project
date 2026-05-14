@@ -1,36 +1,30 @@
-# READ THE README txt to run it
+from fastapi import FastAPI
+try:
+    from .models import TriageRequest, TriageResponse
+    from .triage_service import TriageService
+except ImportError:
+    from models import TriageRequest, TriageResponse
+    from triage_service import TriageService
 
-from fastapi import FastAPI, HTTPException, Query
-from typing import List
-from models import WordEntry
-from service import DictionaryService
+app = FastAPI(title="SACA ML + Yolngu NLP API")
 
-app = FastAPI(title="Yolngu Dictionary API")
+triage_service = TriageService()
 
-# Initialize
-dict_service = DictionaryService("yolngu_dictionary.json")
 
-@app.get("/words", response_model=List[WordEntry])
-def get_words(page: int = Query(1, ge=1), limit: int = Query(50, ge=1, le=500)):
-    """
-    Return paginated list of all words.
-    """
-    return dict_service.get_all_words(page, limit)
+@app.get("/")
+def health_check():
+    return {
+        "message": "SACA API running",
+        "triage_endpoint": "POST /triage",
+    }
 
-@app.get("/words/{word}", response_model=WordEntry)
-def get_word(word: str):
-    """
-    Return a specific word and its meanings.
-    """
-    entry = dict_service.get_word(word)
-    if not entry:
-        raise HTTPException(status_code=404, detail="Word not found")
-    return entry
 
-@app.get("/search", response_model=List[WordEntry])
-def search_words(q: str = Query(..., min_length=1), page: int = Query(1, ge=1), limit: int = Query(50, ge=1, le=500)):
+@app.post("/triage", response_model=TriageResponse)
+def triage(request: TriageRequest):
     """
-    Search words and meanings (case-insensitive, partial match)
+    Accept free-text symptoms in English or Yolngu and return triage severity.
     """
-    results = dict_service.search(q, page, limit)
-    return results
+    return triage_service.predict(
+        text=request.text,
+        language=request.language,
+    )

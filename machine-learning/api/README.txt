@@ -1,14 +1,13 @@
-Yolngu Dictionary API
+SACA ML + Yolngu NLP API
 
-This project is a Python FastAPI REST API serving a JSON dictionary of Yolngu words and their meanings.
+This project is a Python FastAPI REST API for:
+- Predicting triage severity from free-text symptoms in English or Yolngu
 
 Project Structure
 yolnguAPI/
 │
 ├─ main.py             # FastAPI entry point
 ├─ models.py           # Pydantic models
-├─ service.py          # Dictionary service (loading JSON, search, pagination)
-├─ yolngu_dictionary.json  # Dictionary data
 ├─ requirements.txt    # Python dependencies
 └─ venv/               # Python virtual environment
 
@@ -58,13 +57,8 @@ Uvicorn
 Pydantic
 
 
-Step 5: Place the JSON dictionary
-
-*# Make sure yolngu_dictionary.json is in the same folder as main.py.
-
-
-Step 6: Run the API
-uvicorn main:app --reload
+Step 6: Run the API from the machine-learning folder
+python -m uvicorn api.main:app --reload
 
 **  --reload allows the server to restart automatically if you change code
 
@@ -81,9 +75,32 @@ http://127.0.0.1:8000/redoc
 
 Endpoints:
 
-/words	: GET	Returns all words (supports pagination: page, limit)
-/words/{word}	: GET	Returns meanings for a specific word
-/search?q=term	: GET	Search words and meanings (partial, case-insensitive)
+/triage : POST Predicts symptom severity from English or Yolngu symptom text
+
+Postman example:
+
+POST http://127.0.0.1:8000/triage
+Headers:
+Content-Type: application/json
+
+Body:
+{
+  "text": "I have fever, cough and headache",
+  "language": "english"
+}
+
+Yolngu-style example:
+{
+  "text": "rathala' dhurrur'yun muryun",
+  "language": "yolngu"
+}
+
+Response includes:
+- input_symptoms
+- predicted_severity
+- confidence
+- suggestion
+- important_details
 
 
 Notes:
@@ -91,10 +108,4 @@ Notes:
 ## Always activate the virtual environment before running commands
 
 ## Use /docs to test API during development
-## JSON must be properly formatted; each entry:
-{
-  "word": "example",
-  "meaning": ["definition 1", "definition 2"]
-}
-
-## Duplicate words will be merged automatically
+## Yolngu dictionary data from the NLP zip is integrated at nlp/resources/yolngu_dictionary.json
