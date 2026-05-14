@@ -7,6 +7,7 @@ class SacaBottomNav extends StatelessWidget {
   final VoidCallback? onHomeTap;
   final ValueChanged<Locale>? onLocaleChange;
   final ValueChanged<String>? onLanguageChange;
+  final VoidCallback? onResultsTap;
 
   const SacaBottomNav({
     super.key,
@@ -14,6 +15,7 @@ class SacaBottomNav extends StatelessWidget {
     this.onHomeTap,
     this.onLocaleChange,
     this.onLanguageChange,
+    this.onResultsTap,
   });
 
   void _showLanguagePopup(BuildContext context) {
@@ -81,6 +83,7 @@ class SacaBottomNav extends StatelessWidget {
             onHomeTap?.call();
             break;
           case 1:
+            onResultsTap?.call();
             break;
           case 2:
             _showLanguagePopup(context);

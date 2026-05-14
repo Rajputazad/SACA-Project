@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../l10n/app_localizations.dart';
+import '../services/nlp_api_service.dart';
+import 'results_screen.dart';
 
 class TypeSymptomsScreen extends StatefulWidget {
   final String language;
@@ -42,6 +44,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
   double _intensity = 5;
   int _step = 0;
   bool _isQuestionFlow = false;
+  bool _isSending = false;
 
   @override
   void initState() {
@@ -124,7 +127,60 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
     });
   }
 
-  void _saveSymptom({required bool addMore}) {
+  String _entryText(Map<String, dynamic> item) {
+    final typed = item['typed']?.toString().trim() ?? '';
+    final symptom = item['symptom']?.toString().trim() ?? '';
+    final description = item['description']?.toString().trim() ?? '';
+    final duration = item['duration']?.toString().trim() ?? '';
+    final level = item['level']?.toString().trim() ?? '';
+    final medicine = item['medicine']?.toString().trim() ?? '';
+
+    return [
+      if (typed.isNotEmpty) typed else 'I have $symptom',
+      if (description.isNotEmpty) description,
+      if (duration.isNotEmpty) 'Duration: $duration',
+      if (level.isNotEmpty) 'Intensity: $level',
+      if (medicine.isNotEmpty) 'Medicine: $medicine',
+    ].join('. ');
+  }
+
+  String _typedSymptomsInputText() {
+    return _typedSymptoms.map(_entryText).join('\n');
+  }
+
+  Future<void> _submitTypedSymptoms(String inputText) async {
+    if (inputText.trim().isEmpty || _isSending) return;
+
+    setState(() => _isSending = true);
+    try {
+      final response = await NlpApiService.triage(
+        text: inputText,
+        language: 'auto',
+      );
+      if (!mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ResultsScreen(
+            language: widget.language,
+            onLocaleChange: widget.onLocaleChange,
+            result: TriageResultData.fromApi(response),
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('API error: $error')));
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
+
+  Future<void> _saveSymptom({required bool addMore}) async {
+    late String inputText;
+
     setState(() {
       _typedSymptoms.add({
         'symptom': _selectedSymptom,
@@ -141,6 +197,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
         'addMoreNote': _addMoreAnswerController.text.trim(),
         'typed': _symptomController.text.trim(),
       });
+      inputText = _typedSymptomsInputText();
 
       _isQuestionFlow = false;
       _step = 0;
@@ -155,17 +212,14 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
     });
 
     if (!addMore) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.typedSymptomsSubmitted),
-        ),
-      );
+      await _submitTypedSymptoms(inputText);
     }
   }
 
-  void _next() {
+  Future<void> _next() async {
+    if (_isSending) return;
     if (_step == 4) {
-      _saveSymptom(addMore: _addMoreChoice == 'Yes, add more');
+      await _saveSymptom(addMore: _addMoreChoice == 'Yes, add more');
       return;
     }
     setState(() => _step++);
@@ -477,7 +531,7 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _next,
+                  onPressed: _isSending ? null : _next,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kBrown,
                     foregroundColor: Colors.white,
@@ -487,7 +541,9 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
                     ),
                   ),
                   child: Text(
-                    _step == 4 ? l10n.done : l10n.next,
+                    _isSending
+                        ? l10n.checking
+                        : (_step == 4 ? l10n.done : l10n.next),
                     style: const TextStyle(fontWeight: FontWeight.w900),
                   ),
                 ),

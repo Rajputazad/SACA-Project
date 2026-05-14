@@ -8,6 +8,7 @@ import '../l10n/app_localizations_en.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../services/nlp_api_service.dart';
 import '../widgets/bottom_nav.dart';
+import 'results_screen.dart';
 
 class SpeechSymptomScreen extends StatefulWidget {
   final String language;
@@ -327,32 +328,36 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
   }
 
   Future<void> _showSymptomsAlert() async {
-    final symptomAnswers = <String>[];
-    for (var i = 0; i < _answers.length; i += 3) {
-      symptomAnswers.add(_answers[i]);
-    }
-    if (_questionStep == 4 && _spokenText.trim().isNotEmpty) {
-      symptomAnswers.add(_spokenText.trim());
-    }
-
-    final symptomText = symptomAnswers.join('\n');
-    if (symptomText.trim().isEmpty) return;
+    final inputText = _combinedSymptomText.trim();
+    if (inputText.isEmpty || _isSending) return;
 
     final l10n = _l10n;
 
-    await showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(l10n.symptomsLabel),
-        content: Text(symptomText),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.ok),
+    setState(() => _isSending = true);
+    try {
+      final response = await NlpApiService.triage(
+        text: inputText,
+        language: 'auto',
+      );
+      if (!mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ResultsScreen(
+            language: _language,
+            onLocaleChange: widget.onLocaleChange,
+            result: TriageResultData.fromApi(response),
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${l10n.apiError}: $error')));
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
   }
 
   @override

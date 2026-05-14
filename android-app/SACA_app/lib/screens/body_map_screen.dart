@@ -7,7 +7,9 @@ import 'package:saca_app/l10n/app_localizations.dart';
 
 import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
+import '../services/nlp_api_service.dart';
 import '../widgets/bottom_nav.dart';
+import 'results_screen.dart';
 
 class BodyMapScreen extends StatefulWidget {
   final String language;
@@ -28,6 +30,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
   final FlutterTts _tts = FlutterTts();
   late String _language;
   bool _showBodyMap = false;
+  bool _isSending = false;
   Map<String, String>? _pendingLocationSymptom;
   String? _selectedMapArea;
   String _readText = 'Select your symptom. Tap an image to start.';
@@ -883,26 +886,22 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
 
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: _selectedSymptoms.isEmpty
+                            onPressed: _selectedSymptoms.isEmpty || _isSending
                                 ? null
-                                : () {
+                                : () async {
                                     debugPrint(
                                       'FINAL DATA: $_selectedSymptoms',
                                     );
 
                                     Navigator.pop(sheetContext);
 
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(l10n.symptomsConfirmed),
-                                      ),
-                                    );
+                                    await _submitSelectedSymptoms();
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: kBrown,
                               foregroundColor: Colors.white,
                             ),
-                            child: Text(l10n.confirmSelection),
+                           child: Text(_isSending ? 'Checking...' : l10n.confirmSelection),
                           ),
                         ),
                       ],
@@ -1029,6 +1028,65 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
     return questions;
   }
 
+  String _selectedSymptomsInputText() {
+    return _selectedSymptoms
+        .map((item) {
+          final symptom = item['symptom']?.toString() ?? '';
+          final type = item['type']?.toString() ?? '';
+          final location = item['location']?.toString() ?? '';
+          final duration = item['duration']?.toString() ?? '';
+          final trigger = item['trigger']?.toString() ?? '';
+          final level = item['level']?.toString() ?? '';
+          final medicine = item['medicine']?.toString() ?? '';
+          final notes = item['notes']?.toString() ?? '';
+
+          return [
+            'I have $symptom',
+            if (type.isNotEmpty) type,
+            if (location.isNotEmpty && location != 'Not selected')
+              'Location: $location',
+            if (duration.isNotEmpty) 'Duration: $duration',
+            if (trigger.isNotEmpty) 'Trigger: $trigger',
+            if (level.isNotEmpty) 'Intensity: $level',
+            if (medicine.isNotEmpty) 'Medicine: $medicine',
+            if (notes.isNotEmpty) notes,
+          ].join('. ');
+        })
+        .join('\n');
+  }
+
+  Future<void> _submitSelectedSymptoms() async {
+    final inputText = _selectedSymptomsInputText().trim();
+    if (inputText.isEmpty || _isSending) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isSending = true);
+    try {
+      final response = await NlpApiService.triage(
+        text: inputText,
+        language: 'auto',
+      );
+      if (!mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ResultsScreen(
+            language: _language,
+            onLocaleChange: widget.onLocaleChange,
+            result: TriageResultData.fromApi(response),
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${l10n.apiError}: $error')));
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
+
   List<String> _triggerOptions(String symptom) {
     final value = symptom.toLowerCase();
     if (value.contains('cough') || value.contains('shortness')) {
@@ -1137,9 +1195,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
               Navigator.pop(sheetContext);
 
               if (!addMore) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(l10n.symptomsSubmitted)));
+                _submitSelectedSymptoms();
               }
             }
 
