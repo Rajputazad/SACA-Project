@@ -1,0 +1,45 @@
+Dataset Shape: (25000, 6)
+Columns: ['Patient_ID', 'Age', 'Gender', 'Symptoms', 'Symptom_Count', 'Disease']
+
+Missing Values:
+Patient_ID       0
+Age              0
+Gender           0
+Symptoms         0
+Symptom_Count    0
+Disease          0
+dtype: int64
+
+Disease Distribution:
+Disease
+Anxiety                   911
+Arthritis                 896
+Food Poisoning            871
+Depression                859
+Allergy                   858
+Bronchitis                856
+Dermatitis                856
+Thyroid Disorder          855
+Migraine                  854
+Diabetes                  850
+COVID-19                  839
+Ulcer                     833
+Hypertension              833
+Epilepsy                  832
+Liver Disease             830
+IBS                       830
+Pneumonia                 830
+Parkinson's               826
+Influenza                 824
+Dementia                  823
+Obesity                   819
+Tuberculosis              814
+Anemia                    814
+Chronic Kidney Disease    807
+Common Cold               805
+Heart Disease             804
+Gastritis                 804
+Sinusitis                 795
+Stroke                    790
+Asthma                    782
+Name: count, dtype: int64

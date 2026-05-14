@@ -35,4 +35,8 @@ def predict(text):
     processed = preprocess_text(text)
     vec = vectorizer.transform([processed])
 
+<<<<<<< HEAD
     return model.predict(vec)[0]
+=======
+    return model.predict(vec)[0]
+>>>>>>> origin/master-ML

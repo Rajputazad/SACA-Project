@@ -5,5 +5,8 @@ speechrecognition
 pyaudio
 langdetect
 googletrans==4.0.0-rc1
+<<<<<<< HEAD
 fastapi
 uvicorn
+=======
+>>>>>>> origin/master-ML
