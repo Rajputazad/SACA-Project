@@ -901,7 +901,11 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                               backgroundColor: kBrown,
                               foregroundColor: Colors.white,
                             ),
-                           child: Text(_isSending ? 'Checking...' : l10n.confirmSelection),
+                            child: Text(
+                              _isSending
+                                  ? 'Checking...'
+                                  : l10n.confirmSelection,
+                            ),
                           ),
                         ),
                       ],
@@ -1079,6 +1083,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
       );
     } catch (error) {
       if (!mounted) return;
+      print('${l10n.apiError}: $error');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('${l10n.apiError}: $error')));
