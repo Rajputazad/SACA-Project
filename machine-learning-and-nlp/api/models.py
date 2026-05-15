@@ -7,6 +7,14 @@ class TriageRequest(BaseModel):
     language: str = Field("auto", description="english, yolngu, or auto")
 
 
+class PossibleCondition(BaseModel):
+    condition: str
+    match_score: float
+    matched_symptoms: List[str]
+    common_symptoms: List[str]
+    note: str
+
+
 class TriageResponse(BaseModel):
     input_text: str
     detected_language: str
@@ -15,6 +23,7 @@ class TriageResponse(BaseModel):
     predicted_severity: str
     triage_level: Optional[int] = None
     confidence: Dict[str, float]
+    possible_conditions: List[PossibleCondition]
     suggestion: str
     important_details: List[str]
     model_used: str

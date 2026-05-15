@@ -7,6 +7,7 @@ import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../l10n/app_localizations.dart';
 import '../services/nlp_api_service.dart';
+import '../services/result_history_service.dart';
 import 'results_screen.dart';
 
 class TypeSymptomsScreen extends StatefulWidget {
@@ -157,6 +158,8 @@ class _TypeSymptomsScreenState extends State<TypeSymptomsScreen> {
         text: inputText,
         language: 'auto',
       );
+      if (!mounted) return;
+      await ResultHistoryService.save(response);
       if (!mounted) return;
       await Navigator.push(
         context,

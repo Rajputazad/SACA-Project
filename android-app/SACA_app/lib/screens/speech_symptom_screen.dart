@@ -7,7 +7,9 @@ import '../l10n/app_localizations.dart';
 import '../l10n/app_localizations_en.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../services/nlp_api_service.dart';
+import '../services/result_history_service.dart';
 import '../widgets/bottom_nav.dart';
+import 'results_history_screen.dart';
 import 'results_screen.dart';
 
 class SpeechSymptomScreen extends StatefulWidget {
@@ -279,6 +281,7 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
     });
   }
 
+  // ignore: unused_element
   Future<void> _sendToApi() async {
     if (_spokenText.trim().isEmpty && _answers.isEmpty) return;
 
@@ -339,6 +342,8 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
         text: inputText,
         language: 'auto',
       );
+      if (!mounted) return;
+      await ResultHistoryService.save(response);
       if (!mounted) return;
       await Navigator.push(
         context,
@@ -607,6 +612,17 @@ class _SpeechSymptomScreenState extends State<SpeechSymptomScreen> {
         currentIndex: 0,
         onHomeTap: () => Navigator.pop(context),
         onLocaleChange: widget.onLocaleChange,
+        onResultsTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ResultsHistoryScreen(
+                language: _language,
+                onLocaleChange: widget.onLocaleChange,
+              ),
+            ),
+          );
+        },
         onLanguageChange: (language) {
           setState(() {
             _language = language;

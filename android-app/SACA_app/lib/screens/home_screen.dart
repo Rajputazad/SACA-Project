@@ -6,7 +6,7 @@ import 'body_map_screen.dart';
 import 'package:saca_app/l10n/app_localizations.dart';
 import 'speech_symptom_screen.dart';
 import 'type_symptoms_screen.dart';
-import 'results_screen.dart';
+import 'results_history_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String language;
@@ -307,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen>
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => ResultsScreen(
+              builder: (_) => ResultsHistoryScreen(
                 language: _language,
                 onLocaleChange: widget.onLocaleChange,
               ),

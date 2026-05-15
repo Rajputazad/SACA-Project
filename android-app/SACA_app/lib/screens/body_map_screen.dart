@@ -8,7 +8,9 @@ import 'package:saca_app/l10n/app_localizations.dart';
 import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../services/nlp_api_service.dart';
+import '../services/result_history_service.dart';
 import '../widgets/bottom_nav.dart';
+import 'results_history_screen.dart';
 import 'results_screen.dart';
 
 class BodyMapScreen extends StatefulWidget {
@@ -1071,6 +1073,8 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
         language: 'auto',
       );
       if (!mounted) return;
+      await ResultHistoryService.save(response);
+      if (!mounted) return;
       await Navigator.push(
         context,
         MaterialPageRoute(
@@ -1081,6 +1085,8 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
           ),
         ),
       );
+      if (!mounted) return;
+      setState(_selectedSymptoms.clear);
     } catch (error) {
       if (!mounted) return;
       print('${l10n.apiError}: $error');
@@ -1882,7 +1888,7 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
                   : _symptomGridView(l10n, hasSymptoms),
             ),
           ),
-          if (hasSymptoms && !_showBodyMap)
+          if (hasSymptoms && !_showBodyMap && !_isSending)
             Positioned(
               left: 16,
               right: 16,
@@ -1911,6 +1917,17 @@ class _BodyMapScreenState extends State<BodyMapScreen> {
               currentIndex: 0,
               onHomeTap: () => Navigator.pop(context),
               onLocaleChange: widget.onLocaleChange,
+              onResultsTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ResultsHistoryScreen(
+                      language: _language,
+                      onLocaleChange: widget.onLocaleChange,
+                    ),
+                  ),
+                );
+              },
               onLanguageChange: (language) {
                 setState(() {
                   _language = language;

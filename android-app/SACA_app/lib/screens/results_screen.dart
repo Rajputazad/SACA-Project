@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../painters/bg_decoration_painter.dart';
 import '../widgets/bottom_nav.dart';
+import 'results_history_screen.dart';
 
 class TriageResultData {
   final String inputText;
@@ -10,6 +11,8 @@ class TriageResultData {
   final List<String> inputSymptoms;
   final String predictedSeverity;
   final int? triageLevel;
+  final String possibleCondition;
+  final String note;
   final List<String> suggestion;
   final List<String> importantDetails;
 
@@ -19,6 +22,8 @@ class TriageResultData {
     required this.inputSymptoms,
     required this.predictedSeverity,
     required this.triageLevel,
+    required this.possibleCondition,
+    required this.note,
     required this.suggestion,
     required this.importantDetails,
   });
@@ -31,22 +36,81 @@ class TriageResultData {
       return const [];
     }
 
+    String readFirstString(List<String> keys) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value is String && value.trim().isNotEmpty) return value.trim();
+        if (value is List && value.isNotEmpty) {
+          final first = value.first.toString().trim();
+          if (first.isNotEmpty) return first;
+        }
+      }
+      return '';
+    }
+
+    final symptoms = readList('input_symptoms');
+    final possibleConditions = json['possible_conditions'];
+
+    final firstPossibleCondition =
+        possibleConditions is List &&
+            possibleConditions.isNotEmpty &&
+            possibleConditions.first is Map
+        ? possibleConditions.first as Map
+        : null;
+
+    final conditionFromList =
+        firstPossibleCondition?['condition']?.toString().trim() ?? '';
+
+    final noteFromList =
+        firstPossibleCondition?['note']?.toString().trim() ?? '';
+
+    final condition = conditionFromList.isNotEmpty
+        ? conditionFromList
+        : readFirstString([
+            'possible_condition',
+            'possibleCondition',
+            'predicted_condition',
+            'condition',
+            'top_condition',
+          ]);
+
+    final details =
+        (readList('important_details').isNotEmpty
+                ? readList('important_details')
+                : readList('importantDetails'))
+            .where(
+              (detail) => !detail.toLowerCase().contains(
+                'matched symptoms are normalized',
+              ),
+            )
+            .toList();
+
+    final suggestions = readList('suggestion').isNotEmpty
+        ? readList('suggestion')
+        : readList('suggestions');
+
     return TriageResultData(
       inputText: (json['input_text'] ?? json['processed_text'] ?? '')
           .toString(),
       detectedLanguage: (json['detected_language'] ?? 'auto').toString(),
-      inputSymptoms: readList('input_symptoms'),
+      inputSymptoms: symptoms,
       predictedSeverity: (json['predicted_severity'] ?? 'Needs attention')
           .toString(),
       triageLevel: json['triage_level'] is num
           ? (json['triage_level'] as num).round()
           : int.tryParse((json['triage_level'] ?? '').toString()),
-      suggestion: readList('suggestion').isNotEmpty
-          ? readList('suggestion')
-          : readList('suggestions'),
-      importantDetails: readList('important_details').isNotEmpty
-          ? readList('important_details')
-          : readList('importantDetails'),
+      possibleCondition: condition.isNotEmpty
+          ? condition
+          : (symptoms.isNotEmpty ? symptoms.first : 'Needs review'),
+      note: noteFromList.isNotEmpty
+          ? noteFromList
+          : readFirstString(['note', 'model_note']).isNotEmpty
+          ? readFirstString(['note', 'model_note'])
+          : 'This result is a guide only, not a final diagnosis.',
+      suggestion: suggestions.isNotEmpty
+          ? suggestions
+          : ['Consult a healthcare provider if symptoms continue.'],
+      importantDetails: details,
     );
   }
 
@@ -72,9 +136,10 @@ class ResultsScreen extends StatelessWidget {
       inputSymptoms: ['headache', 'cough', 'fever'],
       predictedSeverity: 'Moderate',
       triageLevel: 2,
+      possibleCondition: 'Flu or cold',
+      note: 'This is a guide only, not a final diagnosis.',
       suggestion: ['Consult a healthcare provider within 24-48 hours.'],
       importantDetails: [
-        'Matched symptoms are normalized to the trained model vocabulary.',
         'For emergency warning signs such as chest pain, trouble breathing, collapse, or severe bleeding, seek urgent care immediately.',
       ],
     ),
@@ -82,6 +147,7 @@ class ResultsScreen extends StatelessWidget {
 
   String _mainEmoji(String text) {
     final value = text.toLowerCase();
+
     if (value.contains('fever') ||
         value.contains('flu') ||
         value.contains('cold')) {
@@ -104,7 +170,9 @@ class ResultsScreen extends StatelessWidget {
     }
     if (value.contains('skin') ||
         value.contains('rash') ||
-        value.contains('burn')) {
+        value.contains('burn') ||
+        value.contains('wound') ||
+        value.contains('bleeding')) {
       return '🩹';
     }
     if (value.contains('anxiety') ||
@@ -117,11 +185,13 @@ class ResultsScreen extends StatelessWidget {
         value.contains('back')) {
       return '💪';
     }
+
     return '🩺';
   }
 
   String _stepEmoji(String text) {
     final value = text.toLowerCase();
+
     if (value.contains('water') || value.contains('drink')) {
       return '💧';
     }
@@ -137,25 +207,31 @@ class ResultsScreen extends StatelessWidget {
     if (value.contains('medicine') || value.contains('tablet')) {
       return '💊';
     }
-    if (value.contains('doctor') || value.contains('health worker')) {
+    if (value.contains('doctor') ||
+        value.contains('health worker') ||
+        value.contains('healthcare')) {
       return '👩‍⚕️';
     }
     if (value.contains('food') || value.contains('eat')) {
       return '🍲';
     }
-    return '✅';
+
+    return '🤕';
   }
 
   Color _severityColor(String severity) {
     final value = severity.toLowerCase();
+
     if (value.contains('emergency') ||
         value.contains('severe') ||
         value.contains('high')) {
       return const Color(0xFFC84D3F);
     }
+
     if (value.contains('moderate') || value.contains('attention')) {
       return const Color(0xFFC77738);
     }
+
     return const Color(0xFF3F914A);
   }
 
@@ -169,7 +245,7 @@ class ResultsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final severityColor = _severityColor(result.predictedSeverity);
     final mainEmoji = _mainEmoji(
-      '${result.symptomSummary} ${result.predictedSeverity}',
+      '${result.symptomSummary} ${result.predictedSeverity} ${result.possibleCondition}',
     );
 
     return Scaffold(
@@ -184,8 +260,15 @@ class ResultsScreen extends StatelessWidget {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final compact = constraints.maxHeight < 720;
+                final verySmall = constraints.maxWidth < 380;
+
                 return SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(22, compact ? 18 : 28, 22, 24),
+                  padding: EdgeInsets.fromLTRB(
+                    verySmall ? 14 : 18,
+                    compact ? 14 : 22,
+                    verySmall ? 14 : 18,
+                    120,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -193,72 +276,103 @@ class ResultsScreen extends StatelessWidget {
                         'Your results',
                         style: TextStyle(
                           color: kTextDark,
-                          fontSize: compact ? 42 : 52,
+                          fontSize: compact ? 34 : 42,
                           fontWeight: FontWeight.w900,
                           height: 1,
                         ),
                       ),
-                      const SizedBox(height: 26),
+
+                      const SizedBox(height: 18),
+
                       _ConditionCard(
                         emoji: mainEmoji,
+                        condition: result.possibleCondition,
                         symptoms: result.symptomSummary,
                         severity: result.predictedSeverity,
                         triageLevel: result.triageLevel,
                         detectedLanguage: result.detectedLanguage,
                         severityColor: severityColor,
                       ),
-                      const SizedBox(height: 24),
+
+                      const SizedBox(height: 16),
+
                       _SectionCard(
-                        title: 'Suggestion',
-                        child: Column(
-                          children: result.suggestion
-                              .map(
-                                (step) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: _StepTile(
-                                    emoji: _stepEmoji(step),
-                                    text: step,
+                        title: 'Predicted severity',
+                        child: _StepTile(
+                          emoji: mainEmoji,
+                          text: result.triageLevel == null
+                              ? result.predictedSeverity
+                              : '${result.predictedSeverity} • Level ${result.triageLevel}',
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      if (result.suggestion.isNotEmpty)
+                        _SectionCard(
+                          title: 'Suggestion',
+                          child: Column(
+                            children: result.suggestion
+                                .map(
+                                  (step) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: _StepTile(
+                                      emoji: _stepEmoji(step),
+                                      text: step,
+                                    ),
                                   ),
-                                ),
-                              )
-                              .toList(),
+                                )
+                                .toList(),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 22),
-                      _SectionCard(
-                        title: 'Important details',
-                        child: Column(
-                          children: result.importantDetails
-                              .map(
-                                (detail) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: _WarningBanner(text: detail),
-                                ),
-                              )
-                              .toList(),
+
+                      if (result.importantDetails.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        _SectionCard(
+                          title: 'Important details',
+                          child: Column(
+                            children: result.importantDetails
+                                .map(
+                                  (detail) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: _WarningBanner(text: detail),
+                                  ),
+                                )
+                                .toList(),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 22),
+                      ],
+
+                      if (result.note.trim().isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        _SectionCard(
+                          title: 'Note',
+                          child: _WarningBanner(text: result.note),
+                        ),
+                      ],
+
+                      const SizedBox(height: 18),
+
                       SizedBox(
                         width: double.infinity,
-                        height: 64,
+                        height: 56,
                         child: ElevatedButton.icon(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
-                                  'Health worker call will be connected later',
+                                  'Calling health worker...',
                                 ),
                               ),
                             );
                           },
-                          icon: const Icon(Icons.call_rounded, size: 30),
+                          icon: const Icon(Icons.call_rounded, size: 24),
                           label: const Text('Call Health Worker'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF438F4D),
                             foregroundColor: Colors.white,
                             textStyle: const TextStyle(
-                              fontSize: 22,
+                              fontSize: 18,
                               fontWeight: FontWeight.w900,
                             ),
                             shape: RoundedRectangleBorder(
@@ -267,13 +381,15 @@ class ResultsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+
+                      const SizedBox(height: 12),
+
                       SizedBox(
                         width: double.infinity,
-                        height: 64,
+                        height: 56,
                         child: OutlinedButton.icon(
                           onPressed: () => _goHome(context),
-                          icon: const Icon(Icons.home_outlined, size: 30),
+                          icon: const Icon(Icons.home_outlined, size: 24),
                           label: const Text('Go to Home'),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: kTextDark,
@@ -282,7 +398,7 @@ class ResultsScreen extends StatelessWidget {
                               width: 2,
                             ),
                             textStyle: const TextStyle(
-                              fontSize: 22,
+                              fontSize: 18,
                               fontWeight: FontWeight.w900,
                             ),
                             shape: RoundedRectangleBorder(
@@ -303,6 +419,17 @@ class ResultsScreen extends StatelessWidget {
         currentIndex: 1,
         onHomeTap: () => _goHome(context),
         onLocaleChange: onLocaleChange,
+        onResultsTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ResultsHistoryScreen(
+                language: language,
+                onLocaleChange: onLocaleChange,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -310,6 +437,7 @@ class ResultsScreen extends StatelessWidget {
 
 class _ConditionCard extends StatelessWidget {
   final String emoji;
+  final String condition;
   final String symptoms;
   final String severity;
   final int? triageLevel;
@@ -318,6 +446,7 @@ class _ConditionCard extends StatelessWidget {
 
   const _ConditionCard({
     required this.emoji,
+    required this.condition,
     required this.symptoms,
     required this.severity,
     required this.triageLevel,
@@ -327,11 +456,15 @@ class _ConditionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displaySeverity = triageLevel == null
+        ? severity
+        : '$severity • Level $triageLevel';
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
+        color: Colors.white.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -340,86 +473,108 @@ class _ConditionCard extends StatelessWidget {
             offset: const Offset(0, 10),
           ),
         ],
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.8),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'PREDICTED SEVERITY',
+            'POSSIBLE CONDITION',
             style: TextStyle(
               color: kTextGrey.withValues(alpha: 0.9),
-              fontSize: 16,
+              fontSize: 13,
               fontWeight: FontWeight.w900,
               letterSpacing: 0.8,
             ),
           ),
-          const SizedBox(height: 18),
+
+          const SizedBox(height: 14),
+
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 92,
-                height: 92,
+                width: 70,
+                height: 70,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: kBrownLight.withValues(alpha: 0.22),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(18),
                 ),
-                child: Text(emoji, style: const TextStyle(fontSize: 46)),
+                child: Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 34),
+                ),
               ),
-              const SizedBox(width: 18),
+
+              const SizedBox(width: 14),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      severity,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      condition,
+                      maxLines: 3,
+                      overflow: TextOverflow.visible,
+                      softWrap: true,
                       style: const TextStyle(
                         color: kTextDark,
-                        fontSize: 32,
+                        fontSize: 24,
                         fontWeight: FontWeight.w900,
-                        height: 1.05,
+                        height: 1.08,
                       ),
                     ),
-                    const SizedBox(height: 10),
+
+                    const SizedBox(height: 8),
+
                     Text(
                       symptoms,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                      overflow: TextOverflow.visible,
+                      softWrap: true,
                       style: const TextStyle(
                         color: kTextGrey,
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w800,
+                        height: 1.2,
                       ),
                     ),
+
                     const SizedBox(height: 8),
+
                     Text(
                       'Language: $detectedLanguage',
                       style: const TextStyle(
                         color: kTextGrey,
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 12),
+
+                    const SizedBox(height: 10),
+
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
+                        horizontal: 12,
+                        vertical: 7,
                       ),
                       decoration: BoxDecoration(
                         color: severityColor.withValues(alpha: 0.16),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
-                        triageLevel == null
-                            ? severity
-                            : '$severity • Level $triageLevel',
+                        displaySeverity,
+                        maxLines: 2,
+                        overflow: TextOverflow.visible,
                         style: TextStyle(
                           color: severityColor,
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w900,
+                          height: 1.1,
                         ),
                       ),
                     ),
@@ -438,29 +593,48 @@ class _SectionCard extends StatelessWidget {
   final String title;
   final Widget child;
 
-  const _SectionCard({required this.title, required this.child});
+  const _SectionCard({
+    required this.title,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.86),
+        color: Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.035),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.75),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
+            maxLines: 2,
+            overflow: TextOverflow.visible,
             style: const TextStyle(
               color: kTextDark,
-              fontSize: 25,
+              fontSize: 22,
               fontWeight: FontWeight.w900,
+              height: 1.1,
             ),
           ),
-          const SizedBox(height: 18),
+
+          const SizedBox(height: 14),
+
           child,
         ],
       ),
@@ -472,37 +646,51 @@ class _StepTile extends StatelessWidget {
   final String emoji;
   final String text;
 
-  const _StepTile({required this.emoji, required this.text});
+  const _StepTile({
+    required this.emoji,
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: kCardSelected,
         borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: kBrownLight.withValues(alpha: 0.18),
+          width: 1,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 54,
-            height: 54,
+            width: 46,
+            height: 46,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.86),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Text(emoji, style: const TextStyle(fontSize: 28)),
+            child: Text(
+              emoji,
+              style: const TextStyle(fontSize: 25),
+            ),
           ),
-          const SizedBox(width: 14),
+
+          const SizedBox(width: 12),
+
           Expanded(
             child: Text(
               text,
+              softWrap: true,
+              overflow: TextOverflow.visible,
               style: const TextStyle(
                 color: kTextDark,
-                fontSize: 18,
+                fontSize: 17,
                 fontWeight: FontWeight.w900,
                 height: 1.25,
               ),
@@ -517,30 +705,43 @@ class _StepTile extends StatelessWidget {
 class _WarningBanner extends StatelessWidget {
   final String text;
 
-  const _WarningBanner({required this.text});
+  const _WarningBanner({
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF0E3),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFFE2B48B).withValues(alpha: 0.35),
+          width: 1,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('⚠️', style: TextStyle(fontSize: 28)),
-          const SizedBox(width: 12),
+          const Text(
+            '⚠️',
+            style: TextStyle(fontSize: 24),
+          ),
+
+          const SizedBox(width: 10),
+
           Expanded(
             child: Text(
               text,
+              softWrap: true,
+              overflow: TextOverflow.visible,
               style: const TextStyle(
                 color: kTextDark,
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w800,
-                height: 1.35,
+                height: 1.32,
               ),
             ),
           ),

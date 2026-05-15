@@ -1,0 +1,31 @@
+{
+  "dataset_rows": 25077,
+  "feature_count": 53,
+  "unique_symptoms": 50,
+  "class_distribution": {
+    "Mild": 202,
+    "Moderate": 5743,
+    "Severe": 19132
+  },
+  "validation_accuracy": 0.9992025518341308,
+  "validation_macro_f1": 0.9992466540752392,
+  "test_accuracy": 0.9994683678894205,
+  "test_macro_f1": 0.9994971178965376,
+  "confusion_matrix": [
+    [
+      31,
+      0,
+      0
+    ],
+    [
+      0,
+      861,
+      0
+    ],
+    [
+      0,
+      2,
+      2868
+    ]
+  ]
+}

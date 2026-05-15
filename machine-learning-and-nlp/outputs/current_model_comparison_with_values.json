@@ -1,0 +1,24 @@
+{
+  "best_model_by_macro_f1": "Neural Network (MLP)",
+  "results": {
+    "XGBoost": {
+      "Accuracy": 0.9994683678894205,
+      "Precision": 0.9992275009656238,
+      "Recall": 0.9997677119628339,
+      "F1-Score": 0.9994971178965376
+    },
+    "Random Forest": {
+      "Accuracy": 0.9994683678894205,
+      "Precision": 0.9992275009656238,
+      "Recall": 0.9891311678093739,
+      "F1-Score": 0.994090739395079
+    },
+    "Neural Network (MLP)": {
+      "Accuracy": 0.9997341839447103,
+      "Precision": 0.9996133023975252,
+      "Recall": 0.9998838559814169,
+      "F1-Score": 0.9997484568542658
+    }
+  },
+  "note": "XGBoost remains the production API model; Random Forest and MLP are comparison-only."
+}
